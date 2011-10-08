@@ -13,6 +13,7 @@ Player = (I) ->
     height: 32
     width: 32
     radius: 16
+    team: 0
     x: 50
     y: 50
     speed: 10
