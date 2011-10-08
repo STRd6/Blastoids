@@ -27,6 +27,34 @@ Player = (I) ->
         x: I.x
         y: I.y
 
+    shootSpread: (direction) ->
+      angle = Math.atan2(direction.x, direction.y)
+
+      up = Point.fromAngle(angle - Math.TAU / 8)
+      straight = Point.fromAngle(angle)
+      down = Point.fromAngle(angle + Math.TAU / 8)
+
+      engine.add
+        class: "Bullet"
+        speed: 15
+        velocity: Point(up.x, up.y)
+        x: I.x
+        y: I.y  
+
+      engine.add
+        class: "Bullet"
+        speed: 15
+        velocity: Point(straight.x, straight.y)
+        x: I.x
+        y: I.y
+
+      engine.add
+        class: "Bullet"
+        speed: 15
+        velocity: Point(down.x, down.y)
+        x: I.x
+        y: I.y
+
   self.bind "update", ->
     I.velocity = Point(0, 0)
 
@@ -41,8 +69,11 @@ Player = (I) ->
 
     I.velocity.scale$(I.speed)
 
-    if actionPressed('space') || actionPressed('z')
-      self.shoot(I.velocity.norm())
+    if actionPressed('space')
+      self.shoot(I.velocity.norm()) unless I.velocity.equal(Point(0, 0))
+
+    if actionPressed('z')
+      self.shootSpread(I.velocity.norm()) unless I.velocity.equal(Point(0, 0))
 
     I.x = I.x.clamp(I.width / 2, App.width - I.width / 2)
     I.y = I.y.clamp(I.height / 2, App.height - I.height / 2)
