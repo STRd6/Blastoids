@@ -6,8 +6,8 @@ Player = (I) ->
     includedModules: ["Movable"]
     height: 32
     width: 32
-    x: 0
-    y: 0
+    x: 50
+    y: 50
     speed: 10
     velocity: Point(0, 0)
 
@@ -43,5 +43,8 @@ Player = (I) ->
 
     if actionPressed('space') || actionPressed('z')
       self.shoot(I.velocity.norm())
+
+    I.x = I.x.clamp(I.width / 2, App.width - I.width / 2)
+    I.y = I.y.clamp(I.height / 2, App.height - I.height / 2)
 
   return self
