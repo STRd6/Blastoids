@@ -1,7 +1,7 @@
 Bullet = (I) ->
   I ||= {}
 
-  $.reverseMerge I,
+  Object.reverseMerge I,
     color: "red"
     height: 4
     includedModules: ["Movable"]
