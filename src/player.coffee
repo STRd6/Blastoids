@@ -1,13 +1,18 @@
 Player = (I) ->
   I ||= {}
 
+  SPRITES_WIDE = 16
+
   animationStep = 0
+  standingOffset = Point(0, -16)
 
   Object.reverseMerge I,
     color: "blue"
     includedModules: ["Movable"]
+    heading: 0
     height: 32
     width: 32
+    radius: 16
     x: 50
     y: 50
     speed: 10
@@ -57,26 +62,42 @@ Player = (I) ->
         y: I.y
 
   self.bind "update", ->
-    I.sprite = sprites[0]  
+    I.hflip = (I.heading > 2*Math.TAU/8 || I.heading < -2*Math.TAU/8)
 
-    I.velocity = Point(0, 0)
+    cycle = (I.age/4).floor() % 2
+    if -Math.TAU/8 <= I.heading <= Math.TAU/8
+      facingOffset = 0
+    else if -3*Math.TAU/8 <= I.heading <= -Math.TAU/8
+      facingOffset = 4
+    else if Math.TAU/8 < I.heading <= 3*Math.TAU/8
+      facingOffset = 2
+    else
+      facingOffset = 0
 
-    if actionDown('left')
-      I.velocity.add$(-1, 0)
-      I.hflip = true
-      I.sprite =  sprites[0]
-    if actionDown('right')
-      I.velocity.add$(1, 0)
-      I.hflip = false
-      I.sprite = sprites[0]
-    if actionDown('up')
-      I.velocity.add$(0, -1)
-      I.sprite = sprites[4]
-    if actionDown('down')
-      I.velocity.add$(0, 1)
-      I.sprite = sprites[2]
+    teamColor = I.team * SPRITES_WIDE
 
-    I.velocity.scale$(I.speed)
+    spriteIndex = cycle + facingOffset + teamColor
+
+    I.spriteOffset = standingOffset
+    I.sprite = sprites[spriteIndex]  
+
+    movement = Point(0, 0)
+
+    if actionDown "left"
+      movement = movement.add(Point(-1, 0))
+    if actionDown "right"
+      movement = movement.add(Point(1, 0))
+    if actionDown "up"
+      movement = movement.add(Point(0, -1))
+    if actionDown "down"
+      movement = movement.add(Point(0, 1))
+
+    movement = movement.norm()
+
+    I.velocity = movement.scale(I.speed)
+
+    unless I.velocity.magnitude() == 0
+      I.heading = Point.direction(Point(0, 0), I.velocity)
 
     if actionPressed('space')
       self.shoot(I.velocity.norm()) unless I.velocity.equal(Point(0, 0))
