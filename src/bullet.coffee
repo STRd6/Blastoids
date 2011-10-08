@@ -8,6 +8,8 @@ Bullet = (I) ->
     speed: 20
     width: 4
 
+  I.velocity.scale$(I.speed)
+
   self = GameObject(I)
 
   return self
