@@ -61,12 +61,18 @@ Player = (I) ->
 
     if actionDown('left')
       I.velocity.add$(-1, 0)
+      I.hflip = true
+      I.sprites =  sprites[0]
     if actionDown('right')
       I.velocity.add$(1, 0)
+      I.hflip = false
+      I.sprites = sprites[0]
     if actionDown('up')
       I.velocity.add$(0, -1)
+      I.sprite = sprites[5]
     if actionDown('down')
       I.velocity.add$(0, 1)
+      I.sprite = sprites[3]
 
     I.velocity.scale$(I.speed)
 
