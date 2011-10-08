@@ -1,6 +1,12 @@
 Player = (I) ->
   I ||= {}
 
+  animationStep = 0
+
+  rightAnimation = [sprites[0], sprites[1]]
+  downAnimation = [sprites[2], sprites[3]]
+  upAnimation = [sprites[4], sprites[5]]
+
   Object.reverseMerge I,
     color: "blue"
     includedModules: ["Movable"]
@@ -62,17 +68,17 @@ Player = (I) ->
     if actionDown('left')
       I.velocity.add$(-1, 0)
       I.hflip = true
-      I.sprites =  sprites[0]
+      I.sprite =  rightAnimation[animationStep]
     if actionDown('right')
       I.velocity.add$(1, 0)
       I.hflip = false
-      I.sprites = sprites[0]
+      I.sprite = rightAnimation[animationStep]
     if actionDown('up')
       I.velocity.add$(0, -1)
-      I.sprite = sprites[5]
+      I.sprite = upAnimation[animationStep]
     if actionDown('down')
       I.velocity.add$(0, 1)
-      I.sprite = sprites[3]
+      I.sprite = downAnimation[animationStep]
 
     I.velocity.scale$(I.speed)
 
@@ -84,5 +90,7 @@ Player = (I) ->
 
     I.x = I.x.clamp(I.width / 2, App.width - I.width / 2)
     I.y = I.y.clamp(I.height / 2, App.height - I.height / 2)
+
+    animationStep = (animationStep % 2)
 
   return self
