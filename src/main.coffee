@@ -7,4 +7,10 @@ window.engine = Engine
 engine.add
   class: "Player"
 
+engine.add
+  x: 200
+  y: 200
+  width: 30
+  height: 30
+
 engine.start()
