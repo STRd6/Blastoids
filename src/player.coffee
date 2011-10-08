@@ -55,6 +55,8 @@ Player = (I) ->
         y: I.y
 
   self.bind "update", ->
+    I.sprite = sprites[0]  
+
     I.velocity = Point(0, 0)
 
     if actionDown('left')
