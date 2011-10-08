@@ -15,7 +15,7 @@ Player = (I) ->
     actions.inject false, (isDown, action) ->
       return isDown || keydown[action]
 
-  actionDown = (actions...) ->
+  actionPressed = (actions...) ->
     actions.inject false, (isDown, action) ->
       return isDown || justPressed[action]
 
@@ -24,6 +24,8 @@ Player = (I) ->
       engine.add
         class: "Bullet"
         velocity: Point(direction.x, direction.y)
+        x: I.x
+        y: I.y
 
   self.bind "update", ->
     I.velocity = Point(0, 0)
@@ -39,7 +41,7 @@ Player = (I) ->
 
     I.velocity.scale$(I.speed)
 
-    if actionDown || justPressed.z
-
+    if actionPressed('space') || actionPressed('z')
+      self.shoot(I.velocity.norm())
 
   return self
