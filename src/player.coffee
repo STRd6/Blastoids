@@ -1,6 +1,8 @@
 Player = (I) ->
   I ||= {}
 
+  controller = Joysticks.getController(0)
+
   SPRITES_WIDE = 16
 
   animationStep = 0
@@ -20,8 +22,11 @@ Player = (I) ->
     velocity: Point(0, 0)
 
   actionDown = (actions...) ->
-    actions.inject false, (isDown, action) ->
-      return isDown || keydown[action]
+    if controller
+      controller.actionDown(actions...)
+    else
+      actions.inject false, (isDown, action) ->
+        return isDown || keydown[action]
 
   actionPressed = (actions...) ->
     actions.inject false, (isDown, action) ->
@@ -82,16 +87,8 @@ Player = (I) ->
     I.spriteOffset = standingOffset
     I.sprite = sprites[spriteIndex]  
 
-    movement = Point(0, 0)
-
-    if actionDown "left"
-      movement = movement.add(Point(-1, 0))
-    if actionDown "right"
-      movement = movement.add(Point(1, 0))
-    if actionDown "up"
-      movement = movement.add(Point(0, -1))
-    if actionDown "down"
-      movement = movement.add(Point(0, 1))
+    movement = controller.position()
+    shootVelocity = controller.position(1)
 
     movement = movement.norm()
 
@@ -100,11 +97,8 @@ Player = (I) ->
     unless I.velocity.magnitude() == 0
       I.heading = Point.direction(Point(0, 0), I.velocity)
 
-    if actionPressed('space')
-      self.shoot(I.velocity.norm()) unless I.velocity.equal(Point(0, 0))
-
-    if actionPressed('z')
-      self.shootSpread(I.velocity.norm()) unless I.velocity.equal(Point(0, 0))
+    if shootVelocity.magnitude() > 0.1
+      self.shoot(shootVelocity.norm())
 
     I.x = I.x.clamp(I.width / 2, App.width - I.width / 2)
     I.y = I.y.clamp(I.height / 2, App.height - I.height / 2)
