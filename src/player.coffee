@@ -28,11 +28,10 @@ Player = (I) ->
         y: I.y
 
     shootSpread: (direction) ->
-      angle = Math.atan2(direction.x, direction.y)
+      angle = Math.atan2(direction.y, direction.x)
 
-      up = Point.fromAngle(angle - Math.TAU / 8)
-      straight = Point.fromAngle(angle)
-      down = Point.fromAngle(angle + Math.TAU / 8)
+      up = Point.fromAngle(angle - Math.TAU / 32)
+      down = Point.fromAngle(angle + Math.TAU / 32)
 
       engine.add
         class: "Bullet"
@@ -44,7 +43,7 @@ Player = (I) ->
       engine.add
         class: "Bullet"
         speed: 15
-        velocity: Point(straight.x, straight.y)
+        velocity: Point(direction.x, direction.y)
         x: I.x
         y: I.y
 
