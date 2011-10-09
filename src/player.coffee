@@ -38,6 +38,8 @@ Player = (I) ->
 
   self = Base(I)
 
+  self.include HealthMeter
+
   self.bind "update", ->
     for key, value of I.cooldowns
       I.cooldowns[key] = value.approach(0, 1)
