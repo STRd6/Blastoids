@@ -13,11 +13,12 @@ Box = (I) ->
   self = Base(I)
 
   self.bind "collide", (other) ->
-    if damage = other.I.damage
-      I.health -= damage
+    if other.I.active
+      if damage = other.I.damage
+        I.health -= damage
 
-      if I.health <= 0
-        self.destroy()
+        if I.health <= 0
+          self.destroy()
 
   self.bind "destroy", ->
     engine.add
