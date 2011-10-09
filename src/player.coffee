@@ -90,6 +90,8 @@ Player = (I) ->
       if I.cooldowns.shoot == 0
         I.cooldowns.shoot = 10
 
+        Sound.play "shotgun"
+
         (10 + rand(5)).times ->
           engine.add
             class: "Bullet"
@@ -102,6 +104,8 @@ Player = (I) ->
     (direction) ->
       if I.cooldowns.shoot == 0
         I.cooldowns.shoot = 20 
+
+        Sound.play "boom"
 
         engine.I.cooldowns.shake = 10                         
 
