@@ -14,10 +14,10 @@ engine.add
   width: 30
   height: 30
 
-engine.bind "afterUpdate", ->
-  engine.I.cameraTransform = Matrix()
-  # screen shake
-  engine.I.cameraTransform.tx += (rand() * 10) - 5
-  engine.I.cameraTransform.ty += (rand() * 10) - 5
+#engine.bind "afterUpdate", ->
+#  engine.I.cameraTransform = Matrix()
+#  screen shake
+#  engine.I.cameraTransform.tx += (rand() * 10) - 5
+#  engine.I.cameraTransform.ty += (rand() * 10) - 5
 
 engine.start()
