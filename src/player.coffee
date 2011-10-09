@@ -12,6 +12,8 @@ Player = (I) ->
 
   Object.reverseMerge I,
     color: "blue"
+    cooldowns:
+      shoot: 0
     includedModules: ["Movable"]
     heading: 0
     height: 32
@@ -37,6 +39,9 @@ Player = (I) ->
   self = GameObject(I)
 
   self.bind "update", ->
+    for key, value of I.cooldowns
+      I.cooldowns[key] = value.approach(0, 1)
+
     if controller.actionDown("A")
       activeWeapon += 1
 
@@ -76,40 +81,54 @@ Player = (I) ->
     I.y = I.y.clamp(I.height / 2, App.height - I.height / 2)
 
   weapons = [
-    (direction) ->
-      engine.add
-        class: "Bullet"
-        velocity: Point(direction.x, direction.y)
-        x: I.x
-        y: I.y
+    (direction) ->    
+      if I.cooldowns.shoot == 0
+        I.cooldowns.shoot = 5
+
+        engine.add
+          class: "Bullet"
+          velocity: Point(direction.x, direction.y)
+          x: I.x
+          y: I.y
     (direction) ->
       angle = Math.atan2(direction.y, direction.x)
 
       up = Point.fromAngle(angle - Math.TAU / 32)
       down = Point.fromAngle(angle + Math.TAU / 32)
 
-      engine.add
-        class: "Bullet"
-        speed: 15
-        velocity: Point(up.x, up.y)
-        x: I.x
-        y: I.y  
+      if I.cooldowns.shoot == 0
+        I.cooldowns.shoot = 10
 
-      engine.add
-        class: "Bullet"
-        speed: 15
-        velocity: Point(direction.x, direction.y)
-        x: I.x
-        y: I.y
+        engine.add
+          class: "Bullet"
+          speed: 15
+          velocity: Point(up.x, up.y)
+          x: I.x
+          y: I.y  
 
-      engine.add
-        class: "Bullet"
-        speed: 15
-        velocity: Point(down.x, down.y)
-        x: I.x
-        y: I.y
+        engine.add
+          class: "Bullet"
+          speed: 15
+          velocity: Point(direction.x, direction.y)
+          x: I.x
+          y: I.y
+
+        engine.add
+          class: "Bullet"
+          speed: 15
+          velocity: Point(down.x, down.y)
+          x: I.x
+          y: I.y
     (direction) ->
+      if I.cooldowns.shoot == 0
+        I.cooldowns.shoot = 20 
 
+        engine.add
+          class: "Bullet"
+          radius: 5
+          velocity: Point(direction.x, direction.y)
+          x: I.x
+          y: I.y
   ]
 
   return self
