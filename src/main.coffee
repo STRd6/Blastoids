@@ -26,6 +26,7 @@ bg.bind 'draw', (canvas) ->
   canvas.fill('rgba(0, 0, 0, 0.3)')
 
 engine.add
+  class: "Box"
   x: 200
   y: 200
   width: 30
@@ -43,7 +44,7 @@ engine.bind "update", ->
   else
     engine.I.cameraTransform = Matrix()
 
-  physics.process(engine.find("Player, Bullet"))
+  physics.process(engine.find("Player, Bullet, Box"))
 
 engine.start()
 
