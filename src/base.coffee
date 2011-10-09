@@ -45,7 +45,7 @@ Base = (I) ->
     I.velocity = Point(I.velocity.x, I.velocity.y)
 
   self.bind "update", ->
-    I.zIndex = 1 + (I.y + I.height)/CANVAS_HEIGHT
+    I.zIndex = 1 + (I.y + I.height)/App.height
 
   self.bind "drawDebug", (canvas) ->
     if I.radius
