@@ -95,29 +95,15 @@ Player = (I) ->
       if I.cooldowns.shoot == 0
         I.cooldowns.shoot = 10
 
-        engine.add
-          class: "Bullet"
-          radius: 4
-          speed: 10
-          velocity: Point(up.x, up.y)
-          x: I.x
-          y: I.y  
+        (5 + rand(8)).times ->
+          engine.add
+            class: "Bullet"
+            radius: 4
+            speed: 10
+            velocity: Point(direction.x, direction.y)
+            x: I.x + rand(6) * I.x.sign()
+            y: I.y + rand(6) * I.y.sign()
 
-        engine.add
-          class: "Bullet"
-          radius: 4
-          speed: 10
-          velocity: Point(direction.x, direction.y)
-          x: I.x
-          y: I.y
-
-        engine.add
-          class: "Bullet"
-          radius: 4
-          speed: 10
-          velocity: Point(down.x, down.y)
-          x: I.x
-          y: I.y
     (direction) ->
       if I.cooldowns.shoot == 0
         I.cooldowns.shoot = 20 
