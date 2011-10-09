@@ -126,6 +126,8 @@ Player = (I) ->
       if I.cooldowns.shoot == 0
         I.cooldowns.shoot = 20 
 
+        engine.I.cooldowns.shake = 10                         
+
         engine.add
           class: "Bullet"
           radius: 7
