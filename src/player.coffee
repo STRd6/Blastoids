@@ -144,6 +144,8 @@ Player = (I) ->
           self.destroy()
 
   self.bind "destroy", ->
+    Sound.play 'death'
+
     engine.add
       class: "ParticleEffect"
       color: I.color
