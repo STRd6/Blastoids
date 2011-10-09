@@ -17,7 +17,7 @@ physics = Physics()
 4.times (i) ->
   engine.add
     class: "Player"
-    controller: i
+    team: i
 
 bg = engine.add
   sprite: background
