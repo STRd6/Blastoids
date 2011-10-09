@@ -3,8 +3,6 @@ Player = (I) ->
 
   activeWeapon = 0
 
-  controller = Joysticks.getController(0)
-
   SPRITES_WIDE = 16
 
   animationStep = 0
@@ -23,6 +21,8 @@ Player = (I) ->
     y: 50
     speed: 7
     velocity: Point(0, 0)
+
+  controller = Joysticks.getController(I.team)
 
   actionDown = (actions...) ->
     if controller
