@@ -20,7 +20,7 @@ engine.bind "update", ->
   for key, value of I.cooldowns
     I.cooldowns[key] = value.approach(0, 1)
 
-engine.bind "shake", (duration, power = 10) ->
+engine.bind "shake", (duration = 10, power = 10) ->
   if I.cooldown.shake == 0
     I.cooldown.shake = duration
 
