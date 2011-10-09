@@ -33,7 +33,6 @@ Physics = ->
       return unless a.collides() && b.collides()
 
       if Collision.circular(a.circle(), b.circle())
-        debugger
         a.trigger "collide", b
         b.trigger "collide", a
 
