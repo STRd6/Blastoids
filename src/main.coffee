@@ -14,7 +14,7 @@ background = Sprite.loadByName "ice_bg"
 
 physics = Physics()
 
-4.times (i) ->
+6.times (i) ->
   engine.add
     class: "Player"
     team: i
