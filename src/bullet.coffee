@@ -14,8 +14,9 @@ Bullet = (I) ->
 
   self = Base(I)
 
-  self.bind "collide", ->
-    self.destroy()  
+  self.bind "collide", (other) ->
+    if other != I.source && other.I.class != "Bullet" 
+      self.destroy() 
 
   return self
 
