@@ -69,7 +69,7 @@ Player = (I) ->
     unless I.velocity.magnitude() == 0
       I.heading = Point.direction(Point(0, 0), I.velocity)
 
-    if shootVelocity.magnitude() > 0.1
+    if shootVelocity.magnitude() > 0.5
       weapons.wrap(activeWeapon)(shootVelocity.norm())
 
     I.x = I.x.clamp(I.width / 2, App.width - I.width / 2)
