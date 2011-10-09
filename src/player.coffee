@@ -101,21 +101,24 @@ Player = (I) ->
 
         engine.add
           class: "Bullet"
-          speed: 15
+          radius: 4
+          speed: 10
           velocity: Point(up.x, up.y)
           x: I.x
           y: I.y  
 
         engine.add
           class: "Bullet"
-          speed: 15
+          radius: 4
+          speed: 10
           velocity: Point(direction.x, direction.y)
           x: I.x
           y: I.y
 
         engine.add
           class: "Bullet"
-          speed: 15
+          radius: 4
+          speed: 10
           velocity: Point(down.x, down.y)
           x: I.x
           y: I.y
@@ -125,8 +128,9 @@ Player = (I) ->
 
         engine.add
           class: "Bullet"
-          radius: 5
+          radius: 7
           velocity: Point(direction.x, direction.y)
+          speed: 7
           x: I.x
           y: I.y
   ]
