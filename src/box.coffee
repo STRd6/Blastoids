@@ -12,7 +12,6 @@ Box = (I) ->
   self = Base(I)
 
   self.bind "collide", ->
-    debugger
     self.destroy()
 
   self.bind "destroy", ->
