@@ -18,11 +18,14 @@ ParticleEffect = (I) ->
   $.extend self.I.generator,
     acceleration: Point(0, 0)
     color: I.color
-    duration: 50
+    duration: 20
     height: (n) ->
       I.particleSizes.wrap(n)
     width: (n) ->
       I.particleSizes.wrap(n)
+    velocity: ->
+      Point.fromAngle(Random.angle()).scale(4)
 
   # We must always return self as the last line
   return self
+
