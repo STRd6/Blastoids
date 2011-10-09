@@ -6,11 +6,24 @@ window.engine = Engine
   cooldowns:
     shake: 0
   includedModules: ["Joysticks"]
+  zSort: true
+
+background = Sprite.loadByName "ice_bg"
 
 physics = Physics()
 
 player = engine.add
   class: "Player"
+
+bg = engine.add
+  sprite: background
+  width: 0
+  height: 0
+  zIndex: -1
+
+bg.bind 'draw', (canvas) ->
+  background.fill(canvas, 0, 0, App.width, App.height)
+  canvas.fill('rgba(0, 0, 0, 0.3)')
 
 engine.add
   x: 200
