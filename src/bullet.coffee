@@ -4,10 +4,11 @@ Bullet = (I) ->
   Object.reverseMerge I,
     color: "red"
     duration: 30
-    height: 4
     includedModules: ["Durable", "Movable"]
-    speed: 20
-    width: 4
+    speed: 12
+    radius: 5
+    width: 10
+    height: 10
 
   I.velocity.scale$(I.speed)
 
