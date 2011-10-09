@@ -12,6 +12,7 @@ Player = (I) ->
     color: "red"
     cooldowns:
       shoot: 0
+    health: 100
     heading: 0
     height: 32
     width: 32
