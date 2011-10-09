@@ -22,7 +22,7 @@ Player = (I) ->
     team: 0
     x: 50
     y: 50
-    speed: 10
+    speed: 7
     velocity: Point(0, 0)
 
   actionDown = (actions...) ->
