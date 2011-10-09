@@ -40,6 +40,8 @@ engine.bind "update", ->
     # screen shake
     engine.I.cameraTransform.tx += (rand() * 10) - 10 / 2
     engine.I.cameraTransform.ty += (rand() * 10) - 10 / 2
+  else
+    engine.I.cameraTransform = Matrix()
 
   physics.process(engine.find("Player, Bullet"))
 
