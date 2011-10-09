@@ -134,7 +134,7 @@ Player = (I) ->
   ]
 
   self.bind "collide", (other) ->
-    if other.I.source != self
+    if other.I.source != self and other.I.active
       if damage = other.I.damage
         I.health -= damage
 
