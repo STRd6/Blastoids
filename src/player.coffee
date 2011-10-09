@@ -86,6 +86,7 @@ Player = (I) ->
 
         engine.add
           class: "Bullet"
+          damage: 4
           source: self
           velocity: Point(direction.x, direction.y)
           x: I.x
@@ -99,6 +100,7 @@ Player = (I) ->
         (10 + rand(5)).times ->
           engine.add
             class: "Bullet"
+            damage: 0.5
             radius: 3
             speed: 10
             source: self
@@ -116,6 +118,7 @@ Player = (I) ->
 
         engine.add
           class: "Bullet"
+          damage: 12
           radius: 7
           velocity: Point(direction.x, direction.y)
           speed: 7
