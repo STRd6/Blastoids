@@ -1,6 +1,9 @@
 Player = (I) ->
   I ||= {}
 
+  activeWeapon = 0
+  weapons = [shoot, shootSpray]
+
   controller = Joysticks.getController(0)
 
   SPRITES_WIDE = 16
