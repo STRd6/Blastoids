@@ -48,7 +48,7 @@ Physics = ->
     A.I.velocity = A.I.velocity.add(pushA)
     B.I.velocity = B.I.velocity.add(pushB)
 
-  resolveCollisions = (objects) ->
+  resolveCollisions = (objects, dt) ->
     objects.eachPair (a, b) ->
       return unless a.collides() && b.collides()
 
