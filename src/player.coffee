@@ -2,7 +2,6 @@ Player = (I) ->
   I ||= {}
 
   activeWeapon = 0
-  weapons = [shoot, shootSpray]
 
   controller = Joysticks.getController(0)
 
@@ -35,42 +34,12 @@ Player = (I) ->
     actions.inject false, (isDown, action) ->
       return isDown || justPressed[action]
 
-  self = GameObject(I).extend
-    shoot: (direction) ->
-      engine.add
-        class: "Bullet"
-        velocity: Point(direction.x, direction.y)
-        x: I.x
-        y: I.y
-
-    shootSpread: (direction) ->
-      angle = Math.atan2(direction.y, direction.x)
-
-      up = Point.fromAngle(angle - Math.TAU / 32)
-      down = Point.fromAngle(angle + Math.TAU / 32)
-
-      engine.add
-        class: "Bullet"
-        speed: 15
-        velocity: Point(up.x, up.y)
-        x: I.x
-        y: I.y  
-
-      engine.add
-        class: "Bullet"
-        speed: 15
-        velocity: Point(direction.x, direction.y)
-        x: I.x
-        y: I.y
-
-      engine.add
-        class: "Bullet"
-        speed: 15
-        velocity: Point(down.x, down.y)
-        x: I.x
-        y: I.y
+  self = GameObject(I)
 
   self.bind "update", ->
+    if controller.actionDown("A")
+      activeWeapon += 1
+
     I.hflip = (I.heading > 2*Math.TAU/8 || I.heading < -2*Math.TAU/8)
 
     cycle = (I.age/4).floor() % 2
@@ -101,9 +70,44 @@ Player = (I) ->
       I.heading = Point.direction(Point(0, 0), I.velocity)
 
     if shootVelocity.magnitude() > 0.1
-      self.shoot(shootVelocity.norm())
+      weapons.wrap(activeWeapon)(shootVelocity.norm())
 
     I.x = I.x.clamp(I.width / 2, App.width - I.width / 2)
     I.y = I.y.clamp(I.height / 2, App.height - I.height / 2)
+
+  weapons = [
+    (direction) ->
+      engine.add
+        class: "Bullet"
+        velocity: Point(direction.x, direction.y)
+        x: I.x
+        y: I.y
+    (direction) ->
+      angle = Math.atan2(direction.y, direction.x)
+
+      up = Point.fromAngle(angle - Math.TAU / 32)
+      down = Point.fromAngle(angle + Math.TAU / 32)
+
+      engine.add
+        class: "Bullet"
+        speed: 15
+        velocity: Point(up.x, up.y)
+        x: I.x
+        y: I.y  
+
+      engine.add
+        class: "Bullet"
+        speed: 15
+        velocity: Point(direction.x, direction.y)
+        x: I.x
+        y: I.y
+
+      engine.add
+        class: "Bullet"
+        speed: 15
+        velocity: Point(down.x, down.y)
+        x: I.x
+        y: I.y
+  ]
 
   return self
