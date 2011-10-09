@@ -7,6 +7,8 @@ window.engine = Engine
     shake: 0
   includedModules: ["Joysticks"]
 
+physics = Physics()
+
 player = engine.add
   class: "Player"
 
