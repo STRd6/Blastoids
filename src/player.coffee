@@ -96,21 +96,23 @@ Player = (I) ->
           x: I.x
           y: I.y
     (direction) ->
-      if I.cooldowns.shoot == 0
+      if I.cooldowns.shoot == 0      
         I.cooldowns.shoot = 10
 
         Sound.play "shotgun"
 
         (10 + rand(5)).times ->
+          angle = Math.atan2(direction.y, direction.x) 
+          angle += rand() * (Math.TAU / 24) - (Math.TAU / 48)        
           engine.add
             class: "Bullet"
-            damage: 0.5
+            damage: 1
             radius: 3
             speed: 10
             source: self
-            velocity: Point(direction.x, direction.y)
-            x: I.x + rand(35) * I.x.sign()
-            y: I.y + rand(30) * I.y.sign()
+            velocity: Point.fromAngle(angle)
+            x: I.x + rand(15) * I.x.sign()
+            y: I.y + rand(15) * I.y.sign()
 
     (direction) ->
       if I.cooldowns.shoot == 0
@@ -122,7 +124,7 @@ Player = (I) ->
 
         engine.add
           class: "Bullet"
-          damage: 12
+          damage: 34
           radius: 7
           velocity: Point(direction.x, direction.y)
           speed: 7
