@@ -126,7 +126,7 @@ Player = (I) ->
       if I.cooldowns.shoot == 0
         I.cooldowns.shoot = 20 
 
-        engine.trigger 
+        engine.trigger 'shake'
 
         engine.add
           class: "Bullet"
