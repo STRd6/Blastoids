@@ -37,11 +37,6 @@ Player = (I) ->
 
   self = Base(I)
 
-  self.bind "collide", (other) ->
-    if other.I.source != self
-      if damage = other.I.damage
-        I.health -= damage
-
   self.bind "update", ->
     for key, value of I.cooldowns
       I.cooldowns[key] = value.approach(0, 1)
@@ -125,6 +120,14 @@ Player = (I) ->
           x: I.x
           y: I.y
   ]
+
+  self.bind "collide", (other) ->
+    if other.I.source != self
+      if damage = other.I.damage
+        I.health -= damage
+
+        if I.health >= 0
+          self.destroy()
 
   self.bind "destroy", ->
     engine.add
