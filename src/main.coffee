@@ -20,13 +20,10 @@ engine.bind "update", ->
   for key, value of engine.I.cooldowns
     engine.I.cooldowns[key] = value.approach(0, 1)
 
-engine.bind "shake", (duration = 10, power = 10) ->
-  if engine.I.cooldowns.shake == 0
-    engine.I.cooldowns.shake = duration
-
+  if engine.I.cooldowns.shake > 0    
     engine.I.cameraTransform = Matrix()
     # screen shake
-    engine.I.cameraTransform.tx += (rand() * power) - power / 2
-    engine.I.cameraTransform.ty += (rand() * power) - power / 2
+    engine.I.cameraTransform.tx += (rand() * 10) - 10 / 2
+    engine.I.cameraTransform.ty += (rand() * 10) - 10 / 2
 
 engine.start()
