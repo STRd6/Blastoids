@@ -88,6 +88,8 @@ Player = (I) ->
       if I.cooldowns.shoot == 0
         I.cooldowns.shoot = 5
 
+        Sound.play "pew"
+
         engine.add
           class: "Bullet"
           damage: 11
