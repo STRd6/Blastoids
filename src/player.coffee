@@ -90,7 +90,7 @@ Player = (I) ->
 
         engine.add
           class: "Bullet"
-          damage: 4
+          damage: 11
           source: self
           velocity: Point(direction.x, direction.y)
           x: I.x
@@ -106,7 +106,7 @@ Player = (I) ->
           angle += rand() * (Math.TAU / 24) - (Math.TAU / 48)        
           engine.add
             class: "Bullet"
-            damage: 1
+            damage: 3
             radius: 3
             speed: 10
             source: self
