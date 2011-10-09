@@ -27,13 +27,6 @@ bg.bind 'draw', (canvas) ->
   background.fill(canvas, 0, 0, App.width, App.height)
   canvas.fill('rgba(0, 0, 0, 0.3)')
 
-engine.add
-  class: "Box"
-  x: 200
-  y: 200
-  width: 30
-  height: 30
-
 engine.bind "update", ->
   for key, value of engine.I.cooldowns
     engine.I.cooldowns[key] = value.approach(0, 1)
@@ -47,6 +40,14 @@ engine.bind "update", ->
     engine.I.cameraTransform = Matrix()
 
   physics.process(engine.find("Player, Bullet, Box"))
+
+  if rand(30) == 0
+    engine.add
+      class: "Box"
+      x: rand(App.width)
+      y: rand(App.height)
+      width: 30
+      height: 30
 
 engine.bind "draw", (canvas) ->
   if DEBUG_DRAW
