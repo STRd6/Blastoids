@@ -12,17 +12,11 @@ HealthMeter = (I, self) ->
     start = Point(0, 0)
 
     padding = 1
-    maxWidth = 100
+    maxWidth = 40
     height = 5
 
-    canvas.fillColor(color)
-    canvas.drawText
-      text: color
-      x: start.x
-      y: start.y - 5 
-
-    canvas.fillColor("#fff")
     canvas.drawRoundRect
+      color: "#fff"
       x: start.x - padding
       y: start.y - padding
       width: maxWidth + 2*padding
@@ -30,14 +24,14 @@ HealthMeter = (I, self) ->
       radius: 2
 
     canvas.drawRoundRect
-      color: color
+      color: "blue"
       x: start.x
       y: start.y
       width: maxWidth * ratio
       height: height
-      radius: 2
+      radius: 4
       stroke:
         color: 'white'
-        width: 2      
+        width: 1      
 
   return {}
