@@ -55,7 +55,7 @@ Physics = ->
       if Collision.circular(a.circle(), b.circle())
         resolveCollision(a, b)
 
-    # Rink Walls
+    # Arena Walls
     objects.each (object) ->
       return unless object.collidesWithWalls()
 
@@ -95,5 +95,4 @@ Physics = ->
       objects.invoke "updatePosition", dt
 
       resolveCollisions(objects, dt)
-      wallCollisions(objects, dt)
 
