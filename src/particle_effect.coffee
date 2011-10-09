@@ -18,7 +18,7 @@ ParticleEffect = (I) ->
   $.extend self.I.generator,
     acceleration: Point(0, 0)
     color: I.color
-    duration: 20
+    duration: 10
     maxSpeed: 50
     height: (n) ->
       I.particleSizes.wrap(n)
