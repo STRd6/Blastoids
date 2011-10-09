@@ -7,7 +7,7 @@ ParticleEffect = (I) ->
     color: "blue"
     duration: 50
     particleCount: 5
-    particleSizes: [4, 6, 2, 4, 6]
+    particleSizes: [8, 6, 8, 4, 6]
     height: 32
     sprite: Sprite.EMPTY
     width: 32
