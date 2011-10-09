@@ -6,14 +6,11 @@ HealthMeter = (I, self) ->
     maxHealth: 100
     health: 100
 
-  self = GameObject(I)
-
   self.bind "draw", (canvas) ->
     drawPowerMeter = (canvas) ->
       ratio = I.health / I.maxHealth
 
-      start = 
-        Point(0, 0)
+      start = Point(0, 0)
 
       padding = 1
       maxWidth = 100
@@ -44,4 +41,4 @@ HealthMeter = (I, self) ->
           color: 'white'
           width: 2      
 
-  return self
+  return {}
