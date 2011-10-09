@@ -127,7 +127,7 @@ Player = (I) ->
       if damage = other.I.damage
         I.health -= damage
 
-        if I.health >= 0
+        if I.health <= 0
           self.destroy()
 
   self.bind "destroy", ->
