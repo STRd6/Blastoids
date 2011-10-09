@@ -45,7 +45,11 @@ Player = (I) ->
       I.cooldowns[key] = value.approach(0, 1)
 
     if controller.actionDown("A")
-      activeWeapon += 1
+      activeWeapon = 0
+    if controller.actionDown("X")
+      activeWeapon = 1
+    if controller.actionDown("B")
+      activeWeapon = 2
 
     I.hflip = (I.heading > 2*Math.TAU/8 || I.heading < -2*Math.TAU/8)
 
