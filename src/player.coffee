@@ -9,7 +9,7 @@ Player = (I) ->
   standingOffset = Point(0, -16)
 
   Object.reverseMerge I,
-    color: "blue"
+    color: "red"
     cooldowns:
       shoot: 0
     heading: 0
@@ -36,6 +36,11 @@ Player = (I) ->
       return isDown || justPressed[action]
 
   self = Base(I)
+
+  self.bind "collide", (other) ->
+    if other.I.source != self
+      if damage = other.I.damage
+        I.health -= damage
 
   self.bind "update", ->
     for key, value of I.cooldowns
@@ -121,4 +126,17 @@ Player = (I) ->
           y: I.y
   ]
 
+  self.bind "destroy", ->
+    engine.add
+      class: "ParticleEffect"
+      color: I.color
+      x: I.x
+      y: I.y
+
+    engine.delay 30, ->
+      engine.add
+        class: "Player"
+        team: I.team
+
   return self
+
