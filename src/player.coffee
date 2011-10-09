@@ -108,6 +108,8 @@ Player = (I) ->
         velocity: Point(down.x, down.y)
         x: I.x
         y: I.y
+    (direction) ->
+
   ]
 
   return self
