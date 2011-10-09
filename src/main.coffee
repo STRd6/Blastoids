@@ -14,8 +14,10 @@ background = Sprite.loadByName "ice_bg"
 
 physics = Physics()
 
-player = engine.add
-  class: "Player"
+4.times (i) ->
+  engine.add
+    class: "Player"
+    controller: i
 
 bg = engine.add
   sprite: background
