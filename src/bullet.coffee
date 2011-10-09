@@ -4,7 +4,7 @@ Bullet = (I) ->
   Object.reverseMerge I,
     color: "red"
     duration: 30
-    includedModules: ["Durable", "Movable"]
+    includedModules: ["Durable"]
     speed: 12
     radius: 5
     width: 10
