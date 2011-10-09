@@ -17,8 +17,8 @@ Player = (I) ->
     width: 32
     radius: 16
     team: 0
-    x: 50
-    y: 50
+    x: rand(App.width)
+    y: rand(App.height)
     speed: 7
     velocity: Point(0, 0)
 
