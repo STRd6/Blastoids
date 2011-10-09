@@ -8,7 +8,7 @@ Base = (I) ->
 
   self = GameObject(I).extend
     collides: ->
-      false
+      true
 
     collidesWithWalls: ->
       true
