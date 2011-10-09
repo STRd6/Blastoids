@@ -4,6 +4,7 @@ Box = (I) ->
   # Set some default properties
   $.reverseMerge I,
     color: "blue"
+    health: 20
     height: 32
     width: 32
     radius: 16
@@ -11,8 +12,12 @@ Box = (I) ->
   # Inherit from game object
   self = Base(I)
 
-  self.bind "collide", ->
-    self.destroy()
+  self.bind "collide", (other) ->
+    if damage = other.I.damage
+      I.health -= damage
+
+      if I.health <= 0
+        self.destroy()
 
   self.bind "destroy", ->
     engine.add
