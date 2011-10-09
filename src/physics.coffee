@@ -55,6 +55,7 @@ Physics = ->
       if Collision.circular(a.circle(), b.circle())
         resolveCollision(a, b)
 
+    return 
     # Arena Walls
     objects.each (object) ->
       return unless object.collidesWithWalls()
