@@ -14,5 +14,8 @@ Bullet = (I) ->
 
   self = Base(I)
 
+  self.bind "collide", ->
+    self.destroy()  
+
   return self
 
