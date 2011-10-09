@@ -1,4 +1,4 @@
-DEBUG_DRAW = true
+DEBUG_DRAW = false
 
 window.sprites = Sprite.loadSheet('soldiers', 32, 48)
 
