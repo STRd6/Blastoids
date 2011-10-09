@@ -10,7 +10,7 @@ Bullet = (I) ->
     width: 10
     height: 10
 
-  I.velocity.scale(I.speed)
+  I.velocity.scale$(I.speed)
 
   self = Base(I)
 
