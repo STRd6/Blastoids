@@ -19,12 +19,13 @@ ParticleEffect = (I) ->
     acceleration: Point(0, 0)
     color: I.color
     duration: 20
+    maxSpeed: 50
     height: (n) ->
       I.particleSizes.wrap(n)
     width: (n) ->
       I.particleSizes.wrap(n)
     velocity: ->
-      Point.fromAngle(Random.angle()).scale(4)
+      Point.fromAngle(Random.angle()).scale(6)
 
   # We must always return self as the last line
   return self
