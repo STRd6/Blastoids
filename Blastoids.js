@@ -9605,13 +9605,22 @@ Box = function(I) {
   I || (I = {});
   $.reverseMerge(I, {
     color: "blue",
+    health: 20,
     height: 32,
     width: 32,
     radius: 16
   });
   self = Base(I);
-  self.bind("collide", function() {
-    return self.destroy();
+  self.bind("collide", function(other) {
+    var damage;
+    if (other.I.active) {
+      if (damage = other.I.damage) {
+        I.health -= damage;
+        if (I.health <= 0) {
+          return self.destroy();
+        }
+      }
+    }
   });
   self.bind("destroy", function() {
     return engine.add({
@@ -9848,7 +9857,13 @@ Player = function(I) {
       I.cooldowns[key] = value.approach(0, 1);
     }
     if (controller.actionDown("A")) {
-      activeWeapon += 1;
+      activeWeapon = 0;
+    }
+    if (controller.actionDown("X")) {
+      activeWeapon = 1;
+    }
+    if (controller.actionDown("B")) {
+      activeWeapon = 2;
     }
     I.hflip = I.heading > 2 * Math.TAU / 8 || I.heading < -2 * Math.TAU / 8;
     cycle = (I.age / 4).floor() % 2;
@@ -9880,8 +9895,10 @@ Player = function(I) {
     function(direction) {
       if (I.cooldowns.shoot === 0) {
         I.cooldowns.shoot = 5;
+        Sound.play("pew");
         return engine.add({
           "class": "Bullet",
+          damage: 11,
           source: self,
           velocity: Point(direction.x, direction.y),
           x: I.x,
@@ -9893,14 +9910,18 @@ Player = function(I) {
         I.cooldowns.shoot = 10;
         Sound.play("shotgun");
         return (10 + rand(5)).times(function() {
+          var angle;
+          angle = Math.atan2(direction.y, direction.x);
+          angle += rand() * (Math.TAU / 24) - (Math.TAU / 48);
           return engine.add({
             "class": "Bullet",
+            damage: 3,
             radius: 3,
             speed: 10,
             source: self,
-            velocity: Point(direction.x, direction.y),
-            x: I.x + rand(35) * I.x.sign(),
-            y: I.y + rand(30) * I.y.sign()
+            velocity: Point.fromAngle(angle),
+            x: I.x + rand(15) * I.x.sign(),
+            y: I.y + rand(15) * I.y.sign()
           });
         });
       }
@@ -9911,6 +9932,7 @@ Player = function(I) {
         engine.I.cooldowns.shake = 10;
         return engine.add({
           "class": "Bullet",
+          damage: 34,
           radius: 7,
           velocity: Point(direction.x, direction.y),
           speed: 7,
@@ -9923,7 +9945,7 @@ Player = function(I) {
   ];
   self.bind("collide", function(other) {
     var damage;
-    if (other.I.source !== self) {
+    if (other.I.source !== self && other.I.active) {
       if (damage = other.I.damage) {
         I.health -= damage;
         if (I.health <= 0) {
@@ -9933,6 +9955,7 @@ Player = function(I) {
     }
   });
   self.bind("destroy", function() {
+    Sound.play('death');
     engine.add({
       "class": "ParticleEffect",
       color: I.color,
