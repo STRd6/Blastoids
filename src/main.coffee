@@ -1,3 +1,5 @@
+DEBUG_DRAW = true
+
 window.sprites = Sprite.loadSheet('soldiers', 32, 48)
 
 window.engine = Engine 
@@ -45,6 +47,14 @@ engine.bind "update", ->
     engine.I.cameraTransform = Matrix()
 
   physics.process(engine.find("Player, Bullet, Box"))
+
+engine.bind "draw", (canvas) ->
+  if DEBUG_DRAW
+    engine.find("Player, Bullet, Box").each (object) ->
+      object.trigger("drawDebug", canvas)  
+
+$(document).bind "keydown", "0", ->
+  DEBUG_DRAW = !DEBUG_DRAW
 
 engine.start()
 
