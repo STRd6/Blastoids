@@ -28,32 +28,13 @@ Physics = ->
       position: -WALL_BOTTOM
   }]
 
-  threshold = 5
-
-  resolveCollision = (A, B) ->
-    normal = B.center().subtract(A.center()).norm()
-
-    # Elastic collisions
-    relativeVelocity = A.I.velocity.subtract(B.I.velocity)
-
-    massA = A.mass()
-    massB = B.mass()
-
-    totalMass = massA + massB
-
-    pushA = normal.scale(-2 * (relativeVelocity.dot(normal) * (massB / totalMass) + 1))
-    pushB = normal.scale(+2 * (relativeVelocity.dot(normal) * (massA / totalMass) + 1))
-
-    # Adding impulse
-    A.I.velocity = A.I.velocity.add(pushA)
-    B.I.velocity = B.I.velocity.add(pushB)
-
   resolveCollisions = (objects, dt) ->
     objects.eachPair (a, b) ->
       return unless a.collides() && b.collides()
 
       if Collision.circular(a.circle(), b.circle())
-        resolveCollision(a, b)
+        a.trigger "collide", b
+        b.trigger "collide", a
 
     return 
     # Arena Walls
