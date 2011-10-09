@@ -26,4 +26,7 @@ engine.bind "update", ->
     engine.I.cameraTransform.tx += (rand() * 10) - 10 / 2
     engine.I.cameraTransform.ty += (rand() * 10) - 10 / 2
 
+  physics.process(engine.find("Player, Bullet"))
+
 engine.start()
+
