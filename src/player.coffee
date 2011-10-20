@@ -145,7 +145,7 @@ Player = (I) ->
         source: self
         x: I.x
         y: I.y
-
+  ]  
 
   self.bind "collide", (other) ->
     if other.I.source != self and other.I.active
