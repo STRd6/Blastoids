@@ -19,7 +19,8 @@ Bullet = (I) ->
       self.destroy() 
 
   self.bind "update", ->
-
+    I.x = Math.cos(I.age)
+    I.y = Math.sin(I.age)
 
   return self
 
