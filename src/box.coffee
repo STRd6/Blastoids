@@ -5,9 +5,10 @@ Box = (I) ->
   $.reverseMerge I,
     color: "blue"
     health: 20
-    height: 32
-    width: 32
+    height: 48
+    width: 48
     radius: 16
+    sprite: "barrel"
 
   # Inherit from game object
   self = Base(I)
