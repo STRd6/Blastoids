@@ -129,6 +129,7 @@ Player = (I) ->
         engine.add
           class: "Bullet"
           damage: 34
+          particles: true
           radius: 7
           velocity: Point(direction.x, direction.y)
           speed: 7
