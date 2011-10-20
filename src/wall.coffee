@@ -6,6 +6,7 @@ Wall = (I={}) ->
     sprite: "placeholder"
     end: Point(50, 10)
     width: 4
+    zIndex: 2
 
   # Inherit from game object
   self = GameObject(I).extend
