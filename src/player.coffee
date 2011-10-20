@@ -128,13 +128,13 @@ Player = (I) ->
 
         engine.add
           class: "Bullet"
+          color: "black"
           damage: 34
           particles: true
           radius: 7
           velocity: Point(direction.x, direction.y)
           speed: 7
           source: self
-          sprite: "bomb"
           x: I.x
           y: I.y
     (direction) ->
