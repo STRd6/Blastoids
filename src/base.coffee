@@ -36,6 +36,10 @@ Base = (I) ->
       I.x += I.velocity.x * dt
       I.y += I.velocity.y * dt
 
+      if I.rotationalVelocity
+        log 'here'
+        I.rotation += I.rotationVelocity 
+
       I.center.x = I.x
       I.center.y = I.y
 
