@@ -136,13 +136,15 @@ Player = (I) ->
           x: I.x
           y: I.y
     (direction) ->
+      rotationSpeed = I.age / 3
+
       engine.add
-        class: "Blade"
-        damage: 5
-        duration: 100
+        class: "Bullet"
+        damage: 10
+        duration: 1
         radius: 5
-        velocity: Point(Math.cos(I.age), Math.sin(I.age))
-        speed: 7
+        velocity: Point(Math.cos(rotationSpeed), Math.sin(rotationSpeed))
+        speed: 40
         source: self
         x: I.x
         y: I.y
