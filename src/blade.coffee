@@ -1,4 +1,4 @@
-Bullet = (I) ->
+Blade = (I) ->
   I ||= {}
 
   Object.reverseMerge I,
