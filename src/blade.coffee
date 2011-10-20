@@ -19,8 +19,8 @@ Blade = (I) ->
       self.destroy() 
 
   self.bind "update", ->
-    I.x = I.x + Math.cos(I.age) * I.speed
-    I.y = I.y + Math.sin(I.age) * I.speed
+    I.x = Math.cos(I.age / 90)
+    I.y = Math.sin(I.age / 90)
 
   return self
 
