@@ -137,7 +137,7 @@ Player = (I) ->
           y: I.y
     (direction) ->
       engine.add
-        class: "Bullet"
+        class: "Blade"
         damage: 5
         duration: 100
         radius: 5
