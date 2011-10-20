@@ -24,8 +24,11 @@ Box = (I) ->
   self.bind "destroy", ->
     engine.add
       class: "ParticleEffect"
+      duration: 30
+      particleCount: 7
       x: I.x
       y: I.y
+
 
   # We must always return self as the last line
   return self
