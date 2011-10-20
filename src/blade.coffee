@@ -18,7 +18,7 @@ Blade = (I) ->
     if other != I.source && other.I.class != "Bullet" 
       self.destroy() 
 
-  self.bind "update", ->
+  self.bind "afterUpdate", ->
     I.x = Math.cos(I.age)
     I.y = Math.sin(I.age)
 
