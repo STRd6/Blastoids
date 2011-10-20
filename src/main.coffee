@@ -19,8 +19,11 @@ physics = Physics()
     class: "Player"
     team: i
 
-engine.add
-  class: "Wall"
+6.times ->
+  engine.add
+    class: "Wall"
+    start: Point(rand(App.width), rand(App.height))
+    end: Point(rand(App.width), rand(App.height))
 
 bg = engine.add
   sprite: background
