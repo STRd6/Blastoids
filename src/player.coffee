@@ -139,6 +139,7 @@ Player = (I) ->
       engine.add
         class: "Bullet"
         damage: 5
+        duration: 100
         radius: 5
         velocity: Point(Math.cos(I.age), Math.sin(I.age))
         speed: 7
