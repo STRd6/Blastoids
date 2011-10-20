@@ -19,5 +19,13 @@ Bullet = (I) ->
     if other != I.source && other.I.class != "Bullet" 
       self.destroy() 
 
+  if I.particles
+    self.bind "destroy", ->
+      engine.add
+        class: "ParticleEffect"
+        color: "black"
+        x: I.x
+        y: I.y
+
   return self
 
