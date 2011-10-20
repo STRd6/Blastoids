@@ -29,7 +29,8 @@ Wall = (I={}) ->
     canvas.drawLine
       color: "green"
       start: self.midpoint()
-      end: self.midpoint().add(self.normal()).norm(15)
+      end: self.midpoint().add(self.normal().norm(15))
+      width: 3
 
   # We must always return self as the last line
   return self
