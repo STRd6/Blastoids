@@ -19,6 +19,9 @@ physics = Physics()
     class: "Player"
     team: i
 
+engine.add
+  class: "Wall"
+
 bg = engine.add
   sprite: background
   width: 0
