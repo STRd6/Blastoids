@@ -50,6 +50,8 @@ Player = (I) ->
       activeWeapon = 1
     if controller.actionDown("B")
       activeWeapon = 2
+    if controller.actionDown("Y")
+      activeWeapon = 3
 
     I.hflip = (I.heading > 2*Math.TAU/8 || I.heading < -2*Math.TAU/8)
 
@@ -133,7 +135,17 @@ Player = (I) ->
           source: self
           x: I.x
           y: I.y
-  ]
+    (direction) ->
+      engine.add
+        class: "Bullet"
+        damage: 5
+        radius: 5
+        velocity: Point(Math.cos(I.age), Math.sin(I.age))
+        speed: 7
+        source: self
+        x: I.x
+        y: I.y
+
 
   self.bind "collide", (other) ->
     if other.I.source != self and other.I.active
