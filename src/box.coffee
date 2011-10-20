@@ -3,6 +3,7 @@ Box = (I) ->
 
   # Set some default properties
   $.reverseMerge I,
+
     color: "blue"
     health: 20
     height: 48
@@ -25,10 +26,8 @@ Box = (I) ->
     engine.add
       class: "ParticleEffect"
       duration: 30
-      particleCount: 7
       x: I.x
-      y: I.y
-
+      y: I.y      
 
   # We must always return self as the last line
   return self
