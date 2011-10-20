@@ -9,8 +9,11 @@ Wall = (I={}) ->
 
   # Inherit from game object
   self = GameObject(I).extend
+    direction: ->
+      I.end.subtract(I.start)
+
     normal: ->
-      delta = I.end.subtract(I.start)
+      delta = self.direction()
 
       Point(-delta.y, delta.x)
 
