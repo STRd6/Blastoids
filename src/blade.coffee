@@ -15,12 +15,12 @@ Blade = (I) ->
   self = Bullet(I)
 
   self.bind "collide", (other) ->
-    if other != I.source && other.I.class != "Bullet" 
+    if other != I.source && other.I.class != "Bullet" && other.I.class != "Blade" 
       self.destroy() 
 
-  self.bind "afterUpdate", ->
-    I.x = Math.cos(I.age)
-    I.y = Math.sin(I.age)
+  self.bind "update", ->
+    I.x = I.x + Math.cos(I.age) * I.speed
+    I.y = I.y + Math.sin(I.age) * I.speed
 
   return self
 
