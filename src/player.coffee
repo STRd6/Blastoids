@@ -133,6 +133,7 @@ Player = (I) ->
           velocity: Point(direction.x, direction.y)
           speed: 7
           source: self
+          sprite: "bomb"
           x: I.x
           y: I.y
     (direction) ->
