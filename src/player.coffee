@@ -138,19 +138,20 @@ Player = (I) ->
     (direction) ->
       rotationSpeed = I.age / 3
 
-      engine.add
-        class: "Bullet"
-        damage: 10
-        duration: 1
-        includedModules: ["Rotatable"]
-        radius: 5
-        rotationalVelocity: Math.TAU / 64
-        velocity: Point(Math.cos(rotationSpeed), Math.sin(rotationSpeed))
-        speed: 40
-        source: self
-        sprite: "blade"
-        x: I.x
-        y: I.y
+      3.times (n) ->      
+        engine.add
+          class: "Bullet"
+          damage: 10
+          duration: 1
+          includedModules: ["Rotatable"]
+          radius: 5
+          rotationalVelocity: Math.TAU / 64
+          velocity: Point(Math.cos(rotationSpeed + (Math.TAU / (n + 1))), Math.sin(rotationSpeed + (Math.TAU / (n + 1))))
+          speed: 40
+          source: self
+          sprite: "blade"
+          x: I.x 
+          y: I.y
   ]  
 
   self.bind "collide", (other) ->
