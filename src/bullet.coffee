@@ -24,6 +24,7 @@ Bullet = (I) ->
       engine.add
         class: "ParticleEffect"
         color: "black"
+        particleCount: 5
         x: I.x
         y: I.y
 
