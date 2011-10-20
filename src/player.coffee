@@ -146,7 +146,7 @@ Player = (I) ->
           includedModules: ["Rotatable"]
           radius: 5
           rotationalVelocity: Math.TAU / 64
-          velocity: Point(Math.cos(rotationSpeed + (Math.TAU / (n + 1))), Math.sin(rotationSpeed + (Math.TAU / (n + 1))))
+          velocity: Point(Math.cos(rotationSpeed + (Math.TAU * n) / 3), Math.sin(rotationSpeed + (Math.TAU * n) / 3))
           speed: 40
           source: self
           sprite: "blade"
