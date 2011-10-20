@@ -19,6 +19,7 @@ Blade = (I) ->
       self.destroy() 
 
   self.bind "update", ->
+    log I.x
     I.x = I.x + Math.cos(I.age) * I.speed
     I.y = I.y + Math.sin(I.age) * I.speed
 
