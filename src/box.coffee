@@ -7,7 +7,7 @@ Box = (I) ->
     health: 20
     height: 48
     width: 48
-    radius: 16
+    radius: 24
     sprite: "barrel"
 
   # Inherit from game object
