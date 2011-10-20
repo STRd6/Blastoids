@@ -4,9 +4,9 @@ ParticleEffect = (I) ->
   # Set some default properties
   $.reverseMerge I,
     batchSize: 5
-    color: "blue"
+    color: "#502A2A"
     duration: 50
-    particleCount: 5
+    particleCount: 10
     particleSizes: [8, 6, 8, 4, 6]
     height: 32
     sprite: Sprite.EMPTY
