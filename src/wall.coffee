@@ -11,6 +11,8 @@ Wall = (I={}) ->
   lastProj = 0
   inside = false
   collided = false
+  closestPoint = false
+  norm = false
 
   # Inherit from game object
   self = GameObject(I).extend
@@ -42,9 +44,12 @@ Wall = (I={}) ->
 
         if Collision.circular(circle, closestPoint)
           collided = true
-          return closestPoint.subtract(pos).norm()
+          norm = closestPoint.subtract(pos).norm()
+
+          return norm
 
       collided = false
+      norm = false
 
   # Add events and methods here
   self.bind "update", ->
@@ -81,6 +86,12 @@ Wall = (I={}) ->
         start: I.start
         length: lastProj
         width: 2
+
+    if norm? and closestPoint?
+      canvas.drawLine
+        start: closestPoint
+        end: closestPoint.add(norm.scale(20))
+        color: "red"
 
   # We must always return self as the last line
   return self
