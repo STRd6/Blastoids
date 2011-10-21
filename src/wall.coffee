@@ -10,6 +10,7 @@ Wall = (I={}) ->
 
   lastProj = 0
   inside = false
+  collided = false
 
   # Inherit from game object
   self = GameObject(I).extend
@@ -40,6 +41,7 @@ Wall = (I={}) ->
         closestPoint.radius = 0
 
         if Collision.circular(circle, closestPoint)
+          collided = true
           return closestPoint.direction(circle)
 
   # Add events and methods here
