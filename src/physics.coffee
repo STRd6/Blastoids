@@ -28,14 +28,14 @@ Physics = ->
           velocityProjection = velocity.dot(normal)
           # Heading towards wall
           if velocityProjection < 0
+            debugger
             # Reflection Vector
             velocity = velocity.subtract(normal.scale(2 * velocityProjection))
 
       if collided
         object.I.velocity = velocity
         # Move out of wall
-        object.I.x += velocity.x
-        object.I.y += velocity.y
+        object.updatePosition(dt)
 
   process: (objects, walls) ->
     players = objects.select (object) ->
