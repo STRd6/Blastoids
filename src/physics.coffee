@@ -33,6 +33,9 @@ Physics = ->
 
       if collided
         object.I.velocity = velocity
+        # Move out of wall
+        object.I.x += velocity.x
+        object.I.y += velocity.y
 
   process: (objects, walls) ->
     players = objects.select (object) ->
