@@ -2,9 +2,9 @@ Wall = (I={}) ->
   # Set some default properties
   $.reverseMerge I,
     color: "orange"
-    start: Point(0, 10)
+    start: Point(rand(App.width), rand(App.height))
     sprite: "placeholder"
-    end: Point(50, 10)
+    end: Point(rand(App.width), rand(App.height))
     width: 4
     zIndex: 2
 
@@ -35,6 +35,11 @@ Wall = (I={}) ->
       start: self.midpoint()
       end: self.midpoint().add(self.normal().norm(15))
       width: 3
+
+    canvas.drawCircle
+      position: I.start
+      radius: 5
+      color: "purple"
 
   # We must always return self as the last line
   return self
