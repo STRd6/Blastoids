@@ -44,13 +44,17 @@ Wall = (I={}) ->
           collided = true
           return closestPoint.direction(circle)
 
+      collided = false
+
   # Add events and methods here
   self.bind "update", ->
     ; # Add update method behavior
 
   self.unbind "draw"
   self.bind "draw", (canvas) ->
-    if inside
+    if collided
+      I.color = "red"
+    else if inside
       I.color = "green"
     else
       I.color = "orange"
