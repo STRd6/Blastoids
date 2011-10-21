@@ -11,8 +11,8 @@ Wall = (I={}) ->
   lastProj = 0
   inside = false
   collided = false
-  closestPoint = false
-  norm = false
+  closestPoint = undefined
+  norm = undefined
 
   # Inherit from game object
   self = GameObject(I).extend
@@ -31,10 +31,12 @@ Wall = (I={}) ->
       I.start.add(I.end).scale(0.5)
 
     collides: (circle) ->
-      pos = Point(circle.x, circle.y).subtract(I.start)
+      pos = Point(circle.x, circle.y)
+
+      vec = pos.subtract(I.start)
       direction = self.direction().norm()
 
-      lastProj = projectionLength = pos.dot(direction)
+      lastProj = projectionLength = vec.dot(direction)
 
       inside = projectionLength > 0 and projectionLength < self.length()
 
@@ -44,12 +46,13 @@ Wall = (I={}) ->
 
         if Collision.circular(circle, closestPoint)
           collided = true
-          norm = closestPoint.subtract(pos).norm()
+          norm = pos.subtract(closestPoint).norm()
 
           return norm
 
       collided = false
-      norm = false
+      norm = undefined
+      closestPoint = undefined
 
   # Add events and methods here
   self.bind "update", ->
