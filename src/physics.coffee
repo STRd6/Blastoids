@@ -1,9 +1,4 @@
 Physics = ->
-  WALL_LEFT = 0
-  WALL_RIGHT = App.width
-  WALL_TOP = App.height
-  WALL_BOTTOM = 0
-
   overlapX = (wall, circle) ->
     (circle.x - wall.center.x).abs() < wall.halfWidth + circle.radius 
 
