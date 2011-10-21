@@ -175,7 +175,7 @@ Player = (I) ->
 
     canvas.drawLine
       start: I
-      end: I.velocity.add(I).scale(10)
+      end: I.velocity.scale(10).add(I)
       color: "yellow"
       width: 2
 
