@@ -58,7 +58,7 @@ engine.bind "update", ->
 
 engine.bind "draw", (canvas) ->
   if DEBUG_DRAW
-    engine.find("Player, Bullet, Box").each (object) ->
+    engine.find("Player, Bullet, Box, Wall").each (object) ->
       object.trigger("drawDebug", canvas)  
 
 $(document).bind "keydown", "0", ->
