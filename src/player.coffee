@@ -12,6 +12,7 @@ Player = (I) ->
     color: "red"
     cooldowns:
       shoot: 0
+    hasFlag: false
     health: 100
     heading: 0
     height: 32
@@ -36,7 +37,9 @@ Player = (I) ->
     actions.inject false, (isDown, action) ->
       return isDown || justPressed[action]
 
-  self = Base(I)
+  self = Base(I).extend
+    pickUpFlag: ->
+      I.hasFlag = true
 
   self.include HealthMeter
 
