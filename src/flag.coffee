@@ -12,6 +12,7 @@ Flag = (I) ->
     if other.I.source != self and other.I.class == "Player"
       other.pickUpFlag()
 
-    self.destroy()
+    if other.I.class != "Bullet"
+      self.destroy()
 
   return self
