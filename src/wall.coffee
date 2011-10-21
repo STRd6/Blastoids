@@ -61,7 +61,7 @@ Wall = (I={}) ->
 
     canvas.drawLine(I)
 
-  self.bind "debugDraw", (canvas) ->
+  self.bind "drawDebug", (canvas) ->
     # Debug
     canvas.drawLine
       color: "green"
