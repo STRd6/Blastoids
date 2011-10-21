@@ -147,7 +147,7 @@ Player = (I) ->
 
         engine.add
           class: "Bullet"
-          damage: 10
+          damage: 3
           duration: 1
           includedModules: ["Rotatable"]
           radius: 5
