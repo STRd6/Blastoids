@@ -64,7 +64,7 @@ engine.bind "update", ->
 engine.bind "overlay", (canvas) ->
   for player, index in engine.find("Player")
     canvas.centerText
-      text: "Testing"
+      text: "Player #{player.I.team}"
       x: (index * 80) + 40
       y: 20
 
