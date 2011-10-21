@@ -28,7 +28,6 @@ Physics = ->
           velocityProjection = velocity.dot(normal)
           # Heading towards wall
           if velocityProjection < 0
-            debugger
             # Reflection Vector
             velocity = velocity.subtract(normal.scale(2 * velocityProjection))
 
