@@ -24,9 +24,9 @@ Wall = (I={}) ->
       I.start.add(I.end).scale(0.5)
 
     collides: (circle) ->
-      pos = Point(circle.x, circle.y)
+      ;#pos = Point(circle.x, circle.y)
 
-      lastProj = proj = pos.dot(wall.direction())
+      #lastProj = proj = pos.dot(wall.direction())
 
   # Add events and methods here
   self.bind "update", ->
@@ -47,6 +47,14 @@ Wall = (I={}) ->
       position: I.start
       radius: 5
       color: "purple"
+
+    if lastProj?
+      canvas.drawLine
+        color: "rgba(255, 0, 0, 0.75)"
+        direction: self.direction()
+        start: I.start
+        length: lastProj
+        width: 2
 
   # We must always return self as the last line
   return self
