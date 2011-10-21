@@ -8,6 +8,8 @@ Wall = (I={}) ->
     width: 4
     zIndex: 2
 
+  lastProj = 0
+
   # Inherit from game object
   self = GameObject(I).extend
     direction: ->
@@ -20,6 +22,11 @@ Wall = (I={}) ->
 
     midpoint: ->
       I.start.add(I.end).scale(0.5)
+
+    collides: (circle) ->
+      pos = Point(circle.x, circle.y)
+
+      lastProj = proj = pos.dot(wall.direction())
 
   # Add events and methods here
   self.bind "update", ->
