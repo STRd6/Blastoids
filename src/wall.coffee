@@ -9,6 +9,7 @@ Wall = (I={}) ->
     zIndex: 2
 
   lastProj = 0
+  inside = false
 
   # Inherit from game object
   self = GameObject(I).extend
@@ -20,13 +21,26 @@ Wall = (I={}) ->
 
       Point(-delta.y, delta.x)
 
+    length: ->
+      self.direction().length()
+
     midpoint: ->
       I.start.add(I.end).scale(0.5)
 
     collides: (circle) ->
       pos = Point(circle.x, circle.y).subtract(I.start)
+      direction = self.direction().norm()
 
-      lastProj = proj = pos.dot(self.direction().norm())
+      lastProj = projectionLength = pos.dot(direction)
+
+      inside = projectionLength > 0 and projectionLength < self.length()
+
+      if inside
+        closestPoint = I.start.add(direction.scale(projectionLength))
+        closestPoint.radius = 0
+
+        if Collision.circular(circle, closestPoint)
+          return closestPoint.direction(circle)
 
   # Add events and methods here
   self.bind "update", ->
@@ -34,6 +48,11 @@ Wall = (I={}) ->
 
   self.unbind "draw"
   self.bind "draw", (canvas) ->
+    if inside
+      I.color = "green"
+    else
+      I.color = "orange"
+
     canvas.drawLine(I)
 
     # Debug
