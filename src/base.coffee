@@ -37,7 +37,7 @@ Base = (I) ->
       I.y += I.velocity.y * dt
 
       if I.rotationalVelocity
-        I.rotation += I.rotationalVelocity 
+        I.rotation += I.rotationalVelocity * dt
 
       I.center.x = I.x
       I.center.y = I.y
