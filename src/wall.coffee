@@ -24,7 +24,7 @@ Wall = (I={}) ->
       I.start.add(I.end).scale(0.5)
 
     collides: (circle) ->
-      ;#pos = Point(circle.x, circle.y)
+      pos = Point(circle.x, circle.y)
 
       #lastProj = proj = pos.dot(wall.direction())
 
