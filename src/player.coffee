@@ -45,6 +45,9 @@ Player = (I) ->
   self.include HealthMeter
 
   self.bind "update", ->
+    if I.hasFlag
+      I.score += 1
+
     for key, value of I.cooldowns
       I.cooldowns[key] = value.approach(0, 1)
 
