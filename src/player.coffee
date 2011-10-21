@@ -174,6 +174,14 @@ Player = (I) ->
   self.bind "destroy", ->
     Sound.play 'death'
 
+    if I.hasFlag
+      I.hasFlag = false
+
+    engine.add
+      class: "Flag"
+      x: I.x
+      y: I.y
+
     engine.add
       class: "ParticleEffect"
       color: I.color
