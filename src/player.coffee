@@ -143,13 +143,15 @@ Player = (I) ->
       3.times (n) ->      
         direction = (Math.TAU * n) / 3
 
+        log engine.I.age
+
         engine.add
           class: "Bullet"
           damage: 10
           duration: 1
           includedModules: ["Rotatable"]
           radius: 5
-          rotationalVelocity: Math.TAU / 64
+          rotation: -Math.PI * engine.I.age / 100
           velocity: Point(Math.cos(rotationSpeed + direction), Math.sin(rotationSpeed + direction))
           speed: 40
           source: self
