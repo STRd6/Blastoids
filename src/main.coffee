@@ -23,6 +23,11 @@ physics = Physics()
   engine.add
     class: "Wall"
 
+engine.add
+  class: "Flag"
+  x: 100
+  y: 100
+
 bg = engine.add
   sprite: background
   width: 0
