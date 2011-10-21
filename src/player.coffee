@@ -177,10 +177,10 @@ Player = (I) ->
     if I.hasFlag
       I.hasFlag = false
 
-    engine.add
-      class: "Flag"
-      x: I.x
-      y: I.y
+      engine.add
+        class: "Flag"
+        x: I.x
+        y: I.y
 
     engine.add
       class: "ParticleEffect"
