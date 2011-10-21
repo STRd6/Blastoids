@@ -178,9 +178,9 @@ Player = (I) ->
 
     canvas.drawLine
       start: I
-      end: I.velocity.add(I)
+      end: I.velocity
       color: "yellow"
-      width: 2
+      width: 10
 
   self.bind "destroy", ->
     Sound.play 'death'
