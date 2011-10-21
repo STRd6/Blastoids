@@ -42,7 +42,7 @@ Wall = (I={}) ->
 
         if Collision.circular(circle, closestPoint)
           collided = true
-          return pos.subtract(closestPoint).norm()
+          return closestPoint.subtract(pos).norm()
 
       collided = false
 
