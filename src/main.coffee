@@ -66,7 +66,7 @@ engine.bind "overlay", (canvas) ->
 
   for player, index in players
     canvas.centerText
-      text: "Player #{player.I.team}"
+      text: "Player #{player.I.team}: #{player.I.score}"
       x: (App.width / players.length * (index)) + 60
       y: 20
 
