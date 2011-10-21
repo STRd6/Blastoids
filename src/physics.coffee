@@ -18,7 +18,26 @@ Physics = ->
 
     return
 
-  process: (objects) ->
+  resolveWallCollisions = (objects, walls, dt) ->
+    objects.each (object) ->
+      velocity = object.I.velocity
+      collided = false
+
+      walls.each (wall) ->
+        if normal = wall.collides(object.I)
+          velocityProjection = velocity.dot(normal)
+          # Heading towards wall
+          if velocityProjection < 0
+            # Reflection Vector
+            velocity = velocity.subtract(normal.scale(2 * velocityProjection))
+
+      if collided
+        object.I.velocity = velocity
+
+  process: (objects, walls) ->
+    players = objects.select (object) ->
+      object.I.class == "Player"
+
     steps = 4
 
     dt = 1/steps
@@ -27,6 +46,7 @@ Physics = ->
       objects.invoke "updatePosition", dt
 
       resolveCollisions(objects, dt)
+      resolveWallCollisions(players, walls, dt)
 
     # Debug walls
     if player1 = engine.find("Player.team=0").first()
