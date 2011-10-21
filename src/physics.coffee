@@ -29,6 +29,6 @@ Physics = ->
       resolveCollisions(objects, dt)
 
     # Debug walls
-    if player1 = engine.find("Player.team=0")
+    if player1 = engine.find("Player.team=0").first()
       engine.find("Wall").invoke("collides", player1.I)
 
