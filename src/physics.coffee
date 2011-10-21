@@ -8,11 +8,6 @@ Physics = ->
   rectangularOverlap = (wall, circle) ->
     return overlapX(wall, circle) && overlapY(wall, circle)
 
-  wallOverlap = (wall, circle) ->
-
-
-
-
   resolveCollisions = (objects, dt) ->
     objects.eachPair (a, b) ->
       return unless a.collides() && b.collides()
