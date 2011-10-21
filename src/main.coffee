@@ -61,6 +61,13 @@ engine.bind "update", ->
       width: 30
       height: 30
 
+engine.bind "overlay", (canvas) ->
+  for player, index in engine.find("Player")
+    canvas.centerText
+      text: "Testing"
+      x: (index * 80) + 40
+      y: 20
+
 engine.bind "draw", (canvas) ->
   if DEBUG_DRAW
     engine.find("Player, Bullet, Box, Wall").each (object) ->
