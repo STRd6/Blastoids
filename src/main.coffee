@@ -51,7 +51,7 @@ engine.bind "update", ->
     engine.I.cameraTransform = Matrix()
 
   walls = engine.find("Wall")
-  physics.process(engine.find("Player, Bullet, Box"), walls)
+  physics.process(engine.find("Player, Bullet, Box, Flag"), walls)
 
   if rand(30) == 0
     engine.add
