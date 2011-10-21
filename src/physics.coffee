@@ -30,5 +30,5 @@ Physics = ->
 
     # Debug walls
     if player1 = engine.find("Player.team=0")
-      engine.find("Wall").invoke("collides", player1.circle())
+      engine.find("Wall").invoke("collides", player1.I)
 
