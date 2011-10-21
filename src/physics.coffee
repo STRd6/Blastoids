@@ -29,6 +29,7 @@ Physics = ->
           # Heading towards wall
           if velocityProjection < 0
             # Reflection Vector
+            collided = true
             velocity = velocity.subtract(normal.scale(2 * velocityProjection))
 
       if collided
