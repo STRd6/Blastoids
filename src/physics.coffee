@@ -8,6 +8,11 @@ Physics = ->
   rectangularOverlap = (wall, circle) ->
     return overlapX(wall, circle) && overlapY(wall, circle)
 
+  wallOverlap = (wall, circle) ->
+
+
+
+
   resolveCollisions = (objects, dt) ->
     objects.eachPair (a, b) ->
       return unless a.collides() && b.collides()
@@ -27,4 +32,8 @@ Physics = ->
       objects.invoke "updatePosition", dt
 
       resolveCollisions(objects, dt)
+
+    # Debug walls
+    if player1 = engine.find("Player.team=0")
+      engine.find("Wall").invoke("collides", player1.circle())
 
