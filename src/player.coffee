@@ -171,6 +171,17 @@ Player = (I) ->
         if I.health <= 0
           self.destroy()
 
+  self.bind "debugDraw", (canvas) ->
+    canvas.drawCircle
+      circle: I
+      color: "rgba(255, 0, 0, 0.75)"
+
+    canvas.drawLine
+      start: I
+      end: I.velocity.add(I)
+      color: "yellow"
+      width: 2
+
   self.bind "destroy", ->
     Sound.play 'death'
 
