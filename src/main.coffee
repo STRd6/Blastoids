@@ -19,13 +19,9 @@ physics = Physics()
     class: "Player"
     team: i
 
-engine.add
-  class: "Wall"
-
-engine.add
-  class: "Flag"
-  x: 100
-  y: 100
+6.times (i) ->
+  engine.add
+    class: "Wall"
 
 bg = engine.add
   sprite: background
@@ -49,7 +45,7 @@ engine.bind "update", ->
   else
     engine.I.cameraTransform = Matrix()
 
-  physics.process(engine.find("Player, Bullet, Box, Flag"))
+  physics.process(engine.find("Player, Bullet, Box"))
 
   if rand(30) == 0
     engine.add
