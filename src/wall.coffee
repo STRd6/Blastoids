@@ -48,6 +48,14 @@ Wall = (I={}) ->
       radius: 5
       color: "purple"
 
+    if lastProj?
+      canvas.drawLine
+        color: "rgba(255, 0, 0, 0.75)"
+        direction: self.direction()
+        start: I.start
+        length: lastProj
+        width: 2
+
   # We must always return self as the last line
   return self
 
