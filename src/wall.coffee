@@ -36,7 +36,7 @@ Wall = (I={}) ->
       pos = Point(circle.x, circle.y)
 
       vec = pos.subtract(I.start)
-      direction = self.normal()
+      direction = self.direction().norm()
 
       lastProj = projectionLength = vec.dot(direction)
 
@@ -80,7 +80,7 @@ Wall = (I={}) ->
     canvas.drawLine
       color: "green"
       start: self.midpoint()
-      end: self.midpoint().add(self.normal().norm(15))
+      end: self.midpoint().add(self.normal().scale(15))
       width: 3
 
     canvas.drawCircle
