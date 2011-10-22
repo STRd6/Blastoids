@@ -84,7 +84,7 @@ engine.bind "overlay", (canvas) ->
     canvas.centerText
       color: 'black'
       text: "Player #{parseInt(id) + 1}: #{score}"
-      x: (App.width / players.length * (id)) + 60
+      x: (App.width / 6 * (id)) + 60
       y: 25
 
 engine.bind "draw", (canvas) ->
