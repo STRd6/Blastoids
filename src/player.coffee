@@ -96,7 +96,7 @@ Player = (I) ->
   weapons = [
     (direction) ->    
       if I.cooldowns.shoot == 0
-        I.cooldowns.shoot = 5
+        I.cooldowns.shoot = 3
 
         Sound.play "pew"
 
@@ -105,7 +105,7 @@ Player = (I) ->
 
         engine.add
           class: "Shot"
-          damage: 11
+          damage: 4
           source: self
           start: self.position()
           direction: direction
