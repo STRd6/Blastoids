@@ -22,7 +22,7 @@ Shot = (I={}) ->
       hits = []
 
       objects.each (object) ->
-        unless object != I.source
+        unless object == I.source
           if point = Collision.rayCircle(I.start, I.direction, object)
             hits.push {distanceSquared, point, object}
 
