@@ -21,9 +21,10 @@ Player = (I) ->
     team: 0
     x: rand(App.width)
     y: rand(App.height)
-    score: 0
     speed: 7
     velocity: Point(0, 0)
+
+  playerScores[I.team] = 0
 
   controller = Joysticks.getController(I.team)
 
@@ -46,7 +47,7 @@ Player = (I) ->
 
   self.bind "update", ->
     if I.hasFlag
-      I.score += 1
+      playerScores[I.team] += 1
 
     for key, value of I.cooldowns
       I.cooldowns[key] = value.approach(0, 1)
