@@ -155,8 +155,6 @@ Player = (I) ->
       3.times (n) ->      
         direction = (Math.TAU * n) / 3
 
-        log engine.I.age
-
         engine.add
           class: "Bullet"
           damage: 3
