@@ -109,7 +109,6 @@ Player = (I) ->
           source: self
           start: self.position()
           direction: direction
-          length: 200
 
     (direction) ->
       if I.cooldowns.shoot == 0      
