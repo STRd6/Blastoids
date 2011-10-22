@@ -189,11 +189,11 @@ Player = (I) ->
       color: "yellow"
       width: 2
 
-  self.bind "draw", (canvas) ->
+  self.bind "beforeTransform", (canvas) ->
     if controller.position(1).magnitude() > 0
       canvas.drawCircle
-        x: I.width / 2 + I.crosshairPosition.x
-        y: I.height / 2 + I.crosshairPosition.y
+        x: I.x + I.crosshairPosition.x
+        y: I.y + I.crosshairPosition.y
         radius: 10
         color: 'rgba(0, 150, 0, 0.5)'
 
