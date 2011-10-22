@@ -31,7 +31,7 @@ Shot = (I={}) ->
 
       walls.each (wall) ->
         if point = wall.rayCollides(I)
-          hits.push {distanceSquared, point, object}
+          hits.push {distanceSquared, point, wall}
 
       hits.sort (a, b) ->
         a.distanceSquared - b.distanceSquared
