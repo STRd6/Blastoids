@@ -82,19 +82,19 @@ Player = (I) ->
     I.sprite = sprites[spriteIndex]  
 
     movement = controller.position()
-    shootVelocity = controller.position(1)
+    crosshairVelocity = controller.position(1)
 
     movement = movement.norm()
 
     I.velocity = movement.scale(I.speed)
 
-    I.crosshairPosition = I.crosshairPosition.add(shootVelocity)
+    I.crosshairPosition = I.crosshairPosition.add(crosshairVelocity.scale(10))
 
     unless I.velocity.magnitude() == 0
       I.heading = Point.direction(Point(0, 0), I.velocity)
 
-    if shootVelocity.magnitude() > 0.5
-      weapons.wrap(activeWeapon)(shootVelocity.norm())
+    if crosshairVelocity.magnitude() > 0.5
+      weapons.wrap(activeWeapon)(crosshairVelocity.norm())
 
   weapons = [
     (direction) ->    
