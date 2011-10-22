@@ -7,7 +7,8 @@ Wall = (I={}) ->
     end: Point(rand(App.width), rand(App.height))
     width: 0
     height: 0
-    zIndex: 2
+
+  I.zIndex = 1 + (I.y + I.height)/App.height
 
   lastProj = 0
   inside = false
