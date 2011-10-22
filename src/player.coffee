@@ -87,7 +87,7 @@ Player = (I) ->
 
     I.velocity = movement.scale(I.speed)
 
-    I.crosshairPosition = controller.position(1).norm().scale(40)
+    I.crosshairPosition = controller.position(1).norm().scale(50)
 
     unless I.velocity.magnitude() == 0
       I.heading = Point.direction(Point(0, 0), I.velocity)
@@ -194,7 +194,7 @@ Player = (I) ->
       canvas.drawCircle
         x: I.width / 2 + I.crosshairPosition.x
         y: I.height / 2 + I.crosshairPosition.y
-        radius: 15
+        radius: 10
         color: 'rgba(0, 150, 0, 0.5)'
 
   self.bind "destroy", ->
