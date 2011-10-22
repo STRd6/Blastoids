@@ -57,10 +57,9 @@ Wall = (I={}) ->
       closestPoint = undefined
 
     rayCollides: (ray) ->
-      proj = self.direction().dot(ray.direction)
+      crossProduct = self.direction().cross(ray.direction)
 
-      if proj != 0
-        ;
+      delta = I.start.subtract(ray.start)
 
 
   # Add events and methods here
