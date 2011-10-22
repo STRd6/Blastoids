@@ -15,7 +15,11 @@ Shot = (I={}) ->
   ]
 
   # Inherit from game object
-  self = GameObject(I)
+  self = GameObject(I).extend
+    detectHit: ->
+      ;
+      # Check walls
+      # Check objects
 
   self.unbind "draw"
   self.bind "draw", (canvas) ->
