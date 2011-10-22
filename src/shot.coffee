@@ -17,9 +17,23 @@ Shot = (I={}) ->
   # Inherit from game object
   self = GameObject(I).extend
     detectHit: ->
-      ;
-      # Check walls
-      # Check objects
+      objects = engine.find("Player")
+
+      hits = []
+
+      objects.each (object) ->
+        unless object != I.source
+          if point = Collision.rayCircle(I.start, I.direction, object)
+            hits.push [point, object]
+
+      walls = engine.find("Wall")
+
+      walls.each (wall) ->
+        if point = Collision.rayLineSegment(I.start, wall)
+          ;
+
+      if hits.length
+        ; # find closest hit
 
   self.unbind "draw"
   self.bind "draw", (canvas) ->
