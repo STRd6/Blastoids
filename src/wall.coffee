@@ -24,7 +24,7 @@ Wall = (I={}) ->
     normal: ->
       delta = self.direction()
 
-      Point(-delta.y, delta.x)
+      Point(-delta.y, delta.x).norm()
 
     length: ->
       self.direction().length()
@@ -36,7 +36,7 @@ Wall = (I={}) ->
       pos = Point(circle.x, circle.y)
 
       vec = pos.subtract(I.start)
-      direction = self.direction().norm()
+      direction = self.normal()
 
       lastProj = projectionLength = vec.dot(direction)
 
@@ -55,6 +55,13 @@ Wall = (I={}) ->
       collided = false
       norm = undefined
       closestPoint = undefined
+
+    rayCollides: (ray) ->
+      proj = self.direction().dot(ray.direction)
+
+      if proj != 0
+        ;
+
 
   # Add events and methods here
   self.bind "update", ->
