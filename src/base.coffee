@@ -59,7 +59,7 @@ Base = (I) ->
         radius: I.radius
         color: "rgba(255, 0, 255, 0.5)"
 
-  self.attrReader "mass"
+  self.attrReader "mass", "radius"
 
   I.center = Point(I.x, I.y)
 
