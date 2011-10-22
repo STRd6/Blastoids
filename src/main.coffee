@@ -88,11 +88,13 @@ engine.bind "overlay", (canvas) ->
 
   canvas.font('16px helvetica')
 
-  for id, score in playerScores
+  log window.playerScores
+
+  for id, score of window.playerScores
     canvas.centerText
       color: 'black'
-      text: "Player #{id + 1}: #{score}"
-      x: (App.width / players.length * (index)) + 60
+      text: "Player #{parseInt(id) + 1}: #{score}"
+      x: (App.width / players.length * (id)) + 60
       y: 25
 
 engine.bind "draw", (canvas) ->
