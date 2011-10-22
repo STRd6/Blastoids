@@ -77,11 +77,21 @@ engine.bind "update", ->
 engine.bind "overlay", (canvas) ->
   players = engine.find("Player")
 
+  canvas.drawRoundRect
+    color: 'rgba(255, 255, 255, 0.5)'
+    x: 0
+    y: -10
+    width: App.width
+    height: 50
+
+  canvas.font('16px helvetica')
+
   for player, index in players
     canvas.centerText
+      color: 'black'
       text: "Player #{player.I.team}: #{player.I.score}"
       x: (App.width / players.length * (index)) + 60
-      y: 20
+      y: 25
 
 engine.bind "draw", (canvas) ->
   if DEBUG_DRAW
