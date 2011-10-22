@@ -82,13 +82,12 @@ Player = (I) ->
     I.sprite = sprites[spriteIndex]  
 
     movement = controller.position()
-    crosshairVelocity = controller.position(1)
 
     movement = movement.norm()
 
     I.velocity = movement.scale(I.speed)
 
-    I.crosshairPosition = I.crosshairPosition.add(crosshairVelocity.scale(10))
+    I.crosshairPosition = controller.position(1).norm().scale(40)
 
     unless I.velocity.magnitude() == 0
       I.heading = Point.direction(Point(0, 0), I.velocity)
@@ -191,11 +190,12 @@ Player = (I) ->
       width: 2
 
   self.bind "draw", (canvas) ->
-    canvas.drawCircle
-      x: I.crosshairPosition.x
-      y: I.crosshairPosition.y
-      radius: 15
-      color: 'rgba(0, 150, 0, 0.5)'
+    if controller.position(1).magnitude() > 0
+      canvas.drawCircle
+        x: I.width / 2 + I.crosshairPosition.x
+        y: I.height / 2 + I.crosshairPosition.y
+        radius: 15
+        color: 'rgba(0, 150, 0, 0.5)'
 
   self.bind "destroy", ->
     Sound.play 'death'
