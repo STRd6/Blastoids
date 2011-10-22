@@ -1,4 +1,4 @@
-DEBUG_DRAW = true
+DEBUG_DRAW = false
 
 window.sprites = Sprite.loadSheet('soldiers', 32, 48)
 
@@ -19,9 +19,22 @@ physics = Physics()
     class: "Player"
     team: i
 
-6.times (i) ->
+2.times (i) ->
+  y = 200 * (i + 1)
   engine.add
     class: "Wall"
+    start: Point(100, y)
+    end: Point(700, y)
+
+  engine.add
+    class: "Wall"
+    start: Point(100, y)
+    end: Point(100, y - 100)
+
+  engine.add
+    class: "Wall"
+    start: Point(700, y)
+    end: Point(700, y + 100)
 
 engine.add
   class: "Flag"
