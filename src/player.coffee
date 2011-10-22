@@ -92,7 +92,7 @@ Player = (I) ->
     unless I.velocity.magnitude() == 0
       I.heading = Point.direction(Point(0, 0), I.velocity)
 
-    if controller.axis(5) > 16000
+    if controller.axis(5) > 16000 || controller.axis(4) > 16000
       weapons.wrap(activeWeapon)(I.crosshairPosition.norm())
 
   weapons = [
