@@ -88,8 +88,6 @@ engine.bind "overlay", (canvas) ->
 
   canvas.font('16px helvetica')
 
-  log window.playerScores
-
   for id, score of window.playerScores
     canvas.centerText
       color: 'black'
