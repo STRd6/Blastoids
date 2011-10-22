@@ -61,13 +61,6 @@ Wall = (I={}) ->
 
   self.unbind "draw"
   self.bind "draw", (canvas) ->
-    if collided
-      I.color = "red"
-    else if inside
-      I.color = "green"
-    else
-      I.color = "orange"
-
     canvas.drawLine
       color: I.color
       start: I.start
