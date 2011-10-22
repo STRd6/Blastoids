@@ -5,7 +5,8 @@ Wall = (I={}) ->
     start: Point(rand(App.width), rand(App.height))
     sprite: "placeholder"
     end: Point(rand(App.width), rand(App.height))
-    width: 4
+    width: 0
+    height: 0
     zIndex: 2
 
   lastProj = 0
@@ -67,7 +68,11 @@ Wall = (I={}) ->
     else
       I.color = "orange"
 
-    canvas.drawLine(I)
+    canvas.drawLine
+      color: I.color
+      start: I.start
+      end: I.end
+      width: 4
 
   self.bind "drawDebug", (canvas) ->
     # Debug
