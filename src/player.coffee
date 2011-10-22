@@ -99,6 +99,9 @@ Player = (I) ->
 
         Sound.play "pew"
 
+        # TODO: Compute hit destination
+        # and apply damage
+
         engine.add
           class: "Shot"
           damage: 11
