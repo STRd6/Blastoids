@@ -68,14 +68,6 @@ engine.bind "update", ->
   walls = engine.find("Wall")
   physics.process(engine.find("Player, Bullet, Box, Flag"), walls)
 
-  if rand(30) == 0
-    engine.add
-      class: "Box"
-      x: rand(App.width)
-      y: rand(App.height)
-      width: 30
-      height: 30
-
 engine.bind "overlay", (canvas) ->
   players = engine.find("Player")
 
