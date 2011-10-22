@@ -97,6 +97,8 @@ Player = (I) ->
     (direction) ->    
       if I.cooldowns.shoot == 0
         I.cooldowns.shoot = 3
+        angle = Math.atan2(direction.y, direction.x)
+        angle += rand() * (Math.TAU / 96) - (Math.TAU / 192)
 
         Sound.play "pew"
 
@@ -108,7 +110,7 @@ Player = (I) ->
           damage: 4
           source: self
           start: self.position()
-          direction: direction
+          direction: Point.fromAngle(angle)
 
     (direction) ->
       if I.cooldowns.shoot == 0      
