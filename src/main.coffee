@@ -10,6 +10,8 @@ window.engine = Engine
   includedModules: ["Joysticks"]
   zSort: true
 
+window.playerScores = {}
+
 background = Sprite.loadByName "ice_bg"
 
 physics = Physics()
@@ -86,10 +88,10 @@ engine.bind "overlay", (canvas) ->
 
   canvas.font('16px helvetica')
 
-  for player, index in players
+  for id, score in playerScores
     canvas.centerText
       color: 'black'
-      text: "Player #{player.I.team + 1}: #{player.I.score}"
+      text: "Player #{id + 1}: #{score}"
       x: (App.width / players.length * (index)) + 60
       y: 25
 
