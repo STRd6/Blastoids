@@ -40,7 +40,7 @@ Shot = (I={}) ->
         {point, distanceSquared, object} = nearestHit
 
         I.end = point
-        object.trigger("collide", self)
+        object?.trigger("collide", self)
 
         engine.add
           class: "ParticleEffect"
