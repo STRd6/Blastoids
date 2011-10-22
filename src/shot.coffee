@@ -24,7 +24,7 @@ Shot = (I={}) ->
       objects.each (object) ->
         unless object != I.source
           if point = Collision.rayCircle(I.start, I.direction, object)
-            hits.push [point, object]
+            hits.push {distanceSquared, point, object}
 
       walls = engine.find("Wall")
 
@@ -32,8 +32,20 @@ Shot = (I={}) ->
         if point = Collision.rayLineSegment(I.start, wall)
           ;
 
-      if hits.length
-        ; # find closest hit
+      hits.sort (a, b) ->
+        a.distanceSquared - b.distanceSquared
+
+      if nearestHit = hits.first()
+        {point, distanceSquared, object} = nearestHit
+
+        I.length = Math.sqrt(distanceSquared)
+        object.trigger("collide", self)
+
+        engine.add
+          class: "ParticleEffect"
+          color: "pink"
+          x: point.x
+          y: point.y
 
   self.unbind "draw"
   self.bind "draw", (canvas) ->
