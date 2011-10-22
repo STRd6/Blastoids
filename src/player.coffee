@@ -12,6 +12,7 @@ Player = (I) ->
     color: "red"
     cooldowns:
       shoot: 0
+    crosshairPosition: Point(0, 0)
     hasFlag: false
     health: 100
     heading: 0
@@ -186,6 +187,13 @@ Player = (I) ->
       end: I.velocity.scale(10).add(I)
       color: "yellow"
       width: 2
+
+  self.bind "draw", (canvas) ->
+    canvas.drawCircle
+      x: 50
+      y: 50
+      radius: 15
+      color: 'rgba(0, 150, 0, 0.5)'
 
   self.bind "destroy", ->
     Sound.play 'death'
