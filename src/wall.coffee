@@ -61,6 +61,8 @@ Wall = (I={}) ->
 
       delta = I.start.subtract(ray.start)
 
+      null
+
 
   # Add events and methods here
   self.bind "update", ->
