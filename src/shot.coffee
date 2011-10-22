@@ -28,9 +28,9 @@ Shot = (I={}) ->
 
       walls = engine.find("Wall")
 
-      walls.each (wall) ->
-        if point = Collision.rayLineSegment(I.start, wall)
-          ;
+      # walls.each (wall) ->
+      #  if point = Collision.rayLineSegment(I.start, wall)
+      #    ;
 
       hits.sort (a, b) ->
         a.distanceSquared - b.distanceSquared
@@ -60,5 +60,8 @@ Shot = (I={}) ->
   self.bind "update", ->
     ; # Add update method behavior
 
+  self.detectHit()
+
   # We must always return self as the last line
   return self
+
