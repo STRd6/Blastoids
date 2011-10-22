@@ -5,6 +5,7 @@ Shot = (I={}) ->
     height: 0
     includedModules: ["Durable"]
     duration: 4
+    length: 1200
 
   COLORS = [
     "rgb(255, 255, 255)"
@@ -38,7 +39,7 @@ Shot = (I={}) ->
       if nearestHit = hits.first()
         {point, distanceSquared, object} = nearestHit
 
-        I.length = Math.sqrt(distanceSquared)
+        I.end = point
         object.trigger("collide", self)
 
         engine.add
@@ -49,12 +50,20 @@ Shot = (I={}) ->
 
   self.unbind "draw"
   self.bind "draw", (canvas) ->
-    canvas.drawLine
-      start: I.start
-      direction: I.direction
-      length: I.length
-      color: COLORS[I.age]
-      width: 2
+    if I.end
+      canvas.drawLine
+        start: I.start
+        end: I.end
+        color: COLORS[I.age]
+        width: 2
+
+    else
+      canvas.drawLine
+        start: I.start
+        direction: I.direction
+        length: I.length
+        color: COLORS[I.age]
+        width: 2
 
   # Add events and methods here
   self.bind "update", ->
