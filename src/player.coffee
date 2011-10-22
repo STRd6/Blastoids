@@ -88,6 +88,8 @@ Player = (I) ->
 
     I.velocity = movement.scale(I.speed)
 
+    I.crosshairPosition = I.crosshairPosition.add(shootVelocity)
+
     unless I.velocity.magnitude() == 0
       I.heading = Point.direction(Point(0, 0), I.velocity)
 
@@ -190,8 +192,8 @@ Player = (I) ->
 
   self.bind "draw", (canvas) ->
     canvas.drawCircle
-      x: 50
-      y: 50
+      x: I.crosshairPosition.x
+      y: I.crosshairPosition.y
       radius: 15
       color: 'rgba(0, 150, 0, 0.5)'
 
