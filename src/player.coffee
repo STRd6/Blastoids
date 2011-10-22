@@ -100,12 +100,13 @@ Player = (I) ->
         Sound.play "pew"
 
         engine.add
-          class: "Bullet"
+          class: "Shot"
           damage: 11
           source: self
-          velocity: Point(direction.x, direction.y)
-          x: I.x
-          y: I.y
+          start: self.position()
+          direction: direction
+          length: 200
+
     (direction) ->
       if I.cooldowns.shoot == 0      
         I.cooldowns.shoot = 10
