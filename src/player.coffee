@@ -120,7 +120,7 @@ Player = (I) ->
 
         Sound.play "shotgun"
 
-        (5 + rand(5)).times ->
+        (3 + rand(4)).times ->
           angle = Math.atan2(direction.y, direction.x) 
           angle += rand() * (Math.TAU / 24) - (Math.TAU / 48)        
           engine.add
