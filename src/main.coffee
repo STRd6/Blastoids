@@ -40,8 +40,8 @@ physics = Physics()
 
 engine.add
   class: "Flag"
-  x: 100
-  y: 100
+  x: 150
+  y: 150
 
 bg = engine.add
   sprite: background
