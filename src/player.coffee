@@ -63,6 +63,8 @@ Player = (I) ->
       activeWeapon = 3
     if controller.actionDown("START")
       activeWeapon = 4
+    if justPressed.m
+      activeWeapon = 5
 
     I.hflip = (I.heading > 2*Math.TAU/8 || I.heading < -2*Math.TAU/8)
 
@@ -176,6 +178,14 @@ Player = (I) ->
 
         engine.add
           class: "Mine"
+          x: I.x
+          y: I.y
+    () ->
+      if I.cooldowns.shoot == 0
+        I.cooldowns.shoot = 8
+
+        engine.add
+          class: "HomingMissile"
           x: I.x
           y: I.y
   ]  
