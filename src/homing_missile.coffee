@@ -1,8 +1,9 @@
 HomingMissile = (I={}) ->
   Object.reverseMerge I,
     damage: 10
+    duration: 20
     height: 24
-    includedModules: ["Rotatable"]
+    includedModules: ["Durable", "Rotatable"]
     sprite: "homing_missile"
     radius: 12
     width: 24
@@ -21,12 +22,12 @@ HomingMissile = (I={}) ->
     players.each (player) ->
       unless player == I.source 
         distanceSquared = Point.distanceSquared(Point(I.x, I.y), Point(player.I.x, player.I.y))
-        targets.push {distance: distanceSquared, target: player}  
+        targets.push {distance: distanceSquared, player: player}  
 
         targets.sort (a, b) ->
           a.distance - b.distance
 
-        if target = targets.first().target
+        if target = targets.first().player
           targetPosition = target.position()  
 
           direction = Math.atan2(targetPosition.y, targetPosition.x)
