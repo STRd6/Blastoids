@@ -9,6 +9,7 @@ Mine = (I={}) ->
 
   self.bind "update", ->
     if I.age > I.duration
+      log I.duration
       self.trigger 'destroy'
 
   self.bind 'destroy', ->
