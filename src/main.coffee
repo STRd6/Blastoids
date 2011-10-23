@@ -52,7 +52,7 @@ engine.bind "update", ->
     engine.I.cameraTransform = Matrix()
 
   walls = engine.find("Wall")
-  physics.process(engine.find("Player, Bullet, Box, Flag, Explosion"), walls)
+  physics.process(engine.find("Player, Bullet, Box, Flag, Explosion, HomingMissile"), walls)
 
 engine.bind "overlay", (canvas) ->
   players = engine.find("Player")
