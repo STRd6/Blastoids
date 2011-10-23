@@ -14,16 +14,19 @@ Explosion = (I={}) ->
   self.bind "update", ->
     I.radius += I.deltaRadius
 
-  self.bind "create", ->
-    20.times (n) ->
-      angle = (Math.TAU * (n + 1)) / 20 
+  # TODO: Get binding create to work
+  # to fix serializing and de-serializing
 
-      engine.add
-        class: "Shot"
-        damage: 15
-        direction: Point.fromAngle(angle + rand() * Math.TAU / 16)
-        source: I.source
-        start: self.position()
+  # self.bind "create", ->  
+  20.times (n) ->
+    angle = (Math.TAU * (n + 1)) / 20 
+
+    engine.add
+      class: "Shot"
+      damage: 15
+      direction: Point.fromAngle(angle + rand() * Math.TAU / 16)
+      source: I.source
+      start: self.position()
 
   # We must always return self as the last line
   return self
