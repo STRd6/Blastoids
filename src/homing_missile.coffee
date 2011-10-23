@@ -37,6 +37,5 @@ HomingMissile = (I={}) ->
 
           if direction
             I.velocity = Point((I.velocity.x * 0.95) + Math.cos(direction), (I.velocity.y * 0.95) + Math.sin(direction))
-    log I.velocity
 
   return self
