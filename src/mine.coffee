@@ -3,7 +3,7 @@ Mine = (I={}) ->
     countdown: 60
     sprite: "mine"
 
-  self = GameObject(I)
+  self = Base(I)
 
   self.bind "update", ->
     I.countdown = I.countdown.approach(0, 1)
