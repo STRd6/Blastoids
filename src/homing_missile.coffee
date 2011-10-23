@@ -28,7 +28,7 @@ HomingMissile = (I={}) ->
           a.distance - b.distance
 
         if target = targets.first().player
-          targetPosition = target.position()  
+          targetPosition = Point(target.I.x, target.I.y)  
 
           direction = Math.atan2(targetPosition.y, targetPosition.x)
           I.rotation = direction
