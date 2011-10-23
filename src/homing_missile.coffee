@@ -5,7 +5,6 @@ HomingMissile = (I={}) ->
     sprite: "homing_missile"
     radius: 12
     width: 24
-    velocity: Point(3, 0)
 
   self = Bullet(I)
 
@@ -17,7 +16,7 @@ HomingMissile = (I={}) ->
       unless player == I.source    
 
       if point = Collision.circular(self, player)
-        distanceSquared = Point.distanceSquared(I.start, point)
+        distanceSquared = Point.distanceSquared(Point(I.x, I.y), Point(point.I.x, point.I.y))
         hits.push {distanceSquared, point, object}  
 
       hits.sort (a, b) ->
