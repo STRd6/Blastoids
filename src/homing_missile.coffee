@@ -11,10 +11,6 @@ HomingMissile = (I={}) ->
 
   self = Base(I)
 
-  self.bind "collide", (other) ->
-    if other != self
-      self.destroy() 
-
   self.bind "update", ->
     players = engine.find("Player")
     targets = []
