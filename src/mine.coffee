@@ -23,18 +23,18 @@ Mine = (I={}) ->
       y: I.y
       radius: 60
       color: "transparent"
-      velocity: Point()
+      velocity: Point(0, 0)
 
     10.times (n) ->
       angle = (Math.TAU * (n + 1)) / 10 
 
       engine.add
-        class: "Bullet"
+        class: "Shot"
+        damage: 2
+        direction: Point.fromAngle(angle)
         x: I.x
-        y: I.y
-        radius: 4
-        width: 8
-        height: 8      
-        velocity: Point.fromAngle(angle).scale(2)
+        y: I.y  
+        source: self  
+        start: self.position()
 
   return self
