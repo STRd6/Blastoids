@@ -8,8 +8,8 @@ Weapon = (I={}) ->
 
   # Inherit from game object
   self = GameObject(I).extend
-    fire: (direction) ->
-      I.fire(direction)
+    fire: (source, direction) ->
+      I.fire(source, direction)
 
   # We must always return self as the last line
   return self
