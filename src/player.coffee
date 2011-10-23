@@ -1,7 +1,7 @@
 Player = (I) ->
   I ||= {}
 
-  activeWeapon = 0
+  activeWeapon = "machineGun"
 
   SPRITES_WIDE = 3
 
@@ -56,17 +56,17 @@ Player = (I) ->
       I.cooldowns[key] = value.approach(0, 1)
 
     if controller.actionDown("A")
-      activeWeapon = 0
+      activeWeapon = "machineGun"
     if controller.actionDown("X")
-      activeWeapon = 1
+      activeWeapon = "shotgun"
     if controller.actionDown("B")
-      activeWeapon = 2
+      activeWeapon = ""
     if controller.actionDown("Y")
-      activeWeapon = 3
+      activeWeapon = "blade"
     if controller.actionDown("START")
-      activeWeapon = 4
+      activeWeapon = "mine"
     if controller.actionDown("SELECT")
-      activeWeapon = 5
+      activeWeapon = "homingMissile"
 
     I.hflip = (I.heading > 2*Math.TAU/8 || I.heading < -2*Math.TAU/8)
 
@@ -101,101 +101,8 @@ Player = (I) ->
     unless I.velocity.magnitude() == 0
       I.heading = Point.direction(Point(0, 0), I.velocity)
 
-    if controller.axis(5) > 16000 || controller.axis(4) > 16000 || justPressed.space
-      weapons.wrap(activeWeapon)(I.crosshairPosition.norm())
-
-  weapons = [
-    (direction) ->    
-      if I.cooldowns.shoot == 0
-        I.cooldowns.shoot = 3
-        angle = Math.atan2(direction.y, direction.x)
-        angle += rand() * (Math.TAU / 96) - (Math.TAU / 192)
-
-        Sound.play "pew"
-
-        # TODO: Compute hit destination
-        # and apply damage
-
-        engine.add
-          class: "Shot"
-          damage: 4
-          source: self
-          start: self.position()
-          direction: Point.fromAngle(angle)
-
-    (direction) ->
-      if I.cooldowns.shoot == 0      
-        I.cooldowns.shoot = 10
-
-        Sound.play "shotgun"
-
-        (3 + rand(4)).times ->
-          angle = Math.atan2(direction.y, direction.x) 
-          angle += rand() * (Math.TAU / 24) - (Math.TAU / 48)        
-          engine.add
-            class: "Shot"
-            damage: 2
-            direction: Point.fromAngle(angle)
-            source: self
-            start: self.position()
-
-    (direction) ->
-      if I.cooldowns.shoot == 0
-        I.cooldowns.shoot = 20 
-
-        Sound.play "boom"
-
-        engine.I.cooldowns.shake = 10                         
-
-        engine.add
-          class: "Bullet"
-          color: "black"
-          damage: 34
-          particles: true
-          radius: 7
-          velocity: Point(direction.x, direction.y)
-          speed: 7
-          source: self
-          x: I.x
-          y: I.y
-
-    (direction) ->
-      rotationSpeed = I.age / 3
-
-      3.times (n) ->      
-        direction = (Math.TAU * n) / 3
-
-        engine.add
-          class: "Bullet"
-          damage: 3
-          duration: 1
-          includedModules: ["Rotatable"]
-          radius: 5
-          rotation: -Math.PI * engine.I.age / 100
-          velocity: Point(Math.cos(rotationSpeed + direction), Math.sin(rotationSpeed + direction))
-          speed: 40
-          source: self
-          sprite: "blade"
-          x: I.x 
-          y: I.y
-    () ->
-      if I.cooldowns.shoot == 0
-        I.cooldowns.shoot = 50 
-
-        engine.add
-          class: "Mine"
-          x: I.x
-          y: I.y
-    () ->
-      if I.cooldowns.shoot == 0
-        I.cooldowns.shoot = 24
-
-        engine.add
-          class: "HomingMissile"
-          source: self
-          x: I.x
-          y: I.y
-  ]  
+    if controller.axis(5) > 16000 || controller.axis(4) > 16000
+      Weapon.Weapons[activeWeapon]?(self, I.crosshairPosition.norm())
 
   self.bind "collide", (other) ->
     if other.I.source != self and other.I.active
