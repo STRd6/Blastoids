@@ -18,7 +18,7 @@ Weapon = (I={}) ->
   return self
 
 Weapon.Weapons =
-  blade: Weapon
+  Blade: Weapon
     cooldown: 200
     fire: (source, direction) ->
       3.times (n) ->
