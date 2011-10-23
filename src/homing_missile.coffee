@@ -31,7 +31,4 @@ HomingMissile = (I={}) ->
     I.x += I.velocity.x
     I.y += I.velocity.y
 
-    log I.x
-    log I.y
-
   return self
