@@ -25,12 +25,14 @@ Shot = (I={}) ->
       objects.each (object) ->
         unless object == I.source
           if point = Collision.rayCircle(I.start, I.direction, object)
+            distanceSquared = Point.distanceSquared(I.start, point)
             hits.push {distanceSquared, point, object}
 
       walls = engine.find("Wall")
 
       walls.each (wall) ->
         if point = wall.rayCollides(I)
+          distanceSquared = Point.distanceSquared(I.start, point)
           hits.push {distanceSquared, point, wall}
 
       hits.sort (a, b) ->
