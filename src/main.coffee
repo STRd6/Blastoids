@@ -1,6 +1,8 @@
 DEBUG_DRAW = false
 
 window.sprites = Sprite.loadSheet('soldiers', 32, 48)
+window.playerSprites = [0..5].map (n) ->
+  Sprite.loadSheet("shootman#{n}", 32, 48)
 
 window.engine = Engine 
   backgroundColor: 'black'
