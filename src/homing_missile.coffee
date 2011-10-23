@@ -10,12 +10,16 @@ HomingMissile = (I={}) ->
 
   self = GameObject(I)
 
+  self.bind "collide", (other) ->
+    if other != I.source
+      self.destroy() 
+
   self.bind "update", ->
     players = engine.find("Player")
     targets = []
 
     players.each (player) ->
-      unless player == self 
+      unless player == I.source 
         distanceSquared = Point.distanceSquared(Point(I.x, I.y), Point(player.I.x, player.I.y))
         targets.push {distance: distanceSquared, target: player}  
 
