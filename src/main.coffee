@@ -66,7 +66,7 @@ engine.bind "update", ->
     engine.I.cameraTransform = Matrix()
 
   walls = engine.find("Wall")
-  physics.process(engine.find("Player, Bullet, Box, Flag"), walls)
+  physics.process(engine.find("Player, Bullet, Box, Flag, Explosion"), walls)
 
 engine.bind "overlay", (canvas) ->
   players = engine.find("Player")
@@ -89,7 +89,7 @@ engine.bind "overlay", (canvas) ->
 
 engine.bind "draw", (canvas) ->
   if DEBUG_DRAW
-    engine.find("Player, Bullet, Box, Wall").each (object) ->
+    engine.find("Player, Bullet, Box, Wall, Explosion").each (object) ->
       object.trigger("drawDebug", canvas)  
 
 $(document).bind "keydown", "0", ->
