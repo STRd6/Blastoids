@@ -176,6 +176,14 @@ Player = (I) ->
           sprite: "blade"
           x: I.x 
           y: I.y
+    () ->
+      if I.cooldowns.shoot == 0
+        I.cooldowns.shoot = 50 
+
+        engine.add
+          class: "Mine"
+          x: I.x
+          y: I.y
   ]  
 
   self.bind "collide", (other) ->
