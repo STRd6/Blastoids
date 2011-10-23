@@ -22,27 +22,12 @@ physics = Physics()
     class: "Player"
     team: i
 
-2.times (i) ->
-  y = 200 * (i + 1)
-  engine.add
-    class: "Wall"
-    start: Point(100, y)
-    end: Point(700, y)
-
-  engine.add
-    class: "Wall"
-    start: Point(100, y)
-    end: Point(100, y - 100)
-
-  engine.add
-    class: "Wall"
-    start: Point(700, y)
-    end: Point(700, y + 100)
-
 engine.add
   class: "Flag"
   x: 150
   y: 150
+
+Level.load Level.data[0]
 
 bg = engine.add
   sprite: background
