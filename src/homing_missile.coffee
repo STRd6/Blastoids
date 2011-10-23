@@ -1,6 +1,7 @@
 HomingMissile = (I={}) ->
   Object.reverseMerge I,
     height: 24
+    includedModules: ["Movable"]
     sprite: "homing_missile"
     width: 24
     velocity: Point(3, 0)
@@ -14,13 +15,19 @@ HomingMissile = (I={}) ->
     objects.each (object) ->
       unless object == I.source    
 
-      if point = Collision.circular(self, objects)
+      if point = Collision.circular(self, object)
         distanceSquared = Point.distanceSquared(I.start, point)
         hits.push {distanceSquared, point, object}  
 
       hits.sort (a, b) ->
         a.distanceSquared - b.distanceSquared
 
-    target = currentLevel.nearestTarget(self.position(), I.collisionType);
+      if nearestHit = hits.first()
+        nearestPosition = nearestHit.position()  
+
+        direction = Math.atan2(nearestPosition.y, nearestPosition.x)
+
+        if direction
+          I.velocity = ((I.xVelocity * 0.95) + Math.cos(direction), (I.yVelocity * 0.95) + Math.sin(direction))
 
   return self
