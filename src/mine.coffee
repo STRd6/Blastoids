@@ -10,7 +10,6 @@ Mine = (I={}) ->
 
     if I.countdown == 0
       self.trigger 'destroy' if I.active
-      I.active = false
 
   self.bind 'destroy', ->
     engine.add
