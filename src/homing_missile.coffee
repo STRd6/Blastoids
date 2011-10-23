@@ -15,14 +15,13 @@ HomingMissile = (I={}) ->
 
     players.each (player) ->
       unless player == self 
-        if point = Collision.circular(self, player)
-          distanceSquared = Point.distanceSquared(Point(I.x, I.y), Point(point.I.x, point.I.y))
-          hits.push {distanceSquared, player}  
+        distanceSquared = Point.distanceSquared(Point(I.x, I.y), Point(player.I.x, player.I.y))
+        hits.push [distanceSquared, player]  
 
         hits.sort (a, b) ->
-          a.distanceSquared - b.distanceSquared
+          a[0] - b[0]
 
-        if nearestHit = hits.first()
+        if nearestHit = hits.first()[1]
           nearestPosition = nearestHit.position()  
 
           direction = Math.atan2(nearestPosition.y, nearestPosition.x)
