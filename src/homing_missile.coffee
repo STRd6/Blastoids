@@ -4,9 +4,10 @@ HomingMissile = (I={}) ->
     height: 24
     sprite: "homing_missile"
     width: 24
+    velocity: Point(3, 0)
 
   # Inherit from game object
-  self = GameObject(I)
+  self = Bullet(I)
 
   # Add events and methods here
   self.bind "update", ->
