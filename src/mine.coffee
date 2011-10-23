@@ -15,6 +15,16 @@ Mine = (I={}) ->
       I.active = false
 
   self.bind 'destroy', ->
+    engine.add
+      class: "Bullet"
+      damage: 90
+      duration: 2
+      x: I.x
+      y: I.y
+      radius: 60
+      color: "transparent"
+      velocity: Point()
+
     10.times (n) ->
       angle = (Math.TAU * (n + 1)) / 10 
 
