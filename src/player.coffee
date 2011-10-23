@@ -126,12 +126,12 @@ Player = (I) ->
 
         Sound.play "shotgun"
 
-        (3 + rand(4)).times ->
+        6.times ->
           angle = Math.atan2(direction.y, direction.x) 
           angle += rand() * (Math.TAU / 24) - (Math.TAU / 48)        
           engine.add
             class: "Shot"
-            damage: 2
+            damage: 6
             direction: Point.fromAngle(angle)
             source: self
             start: self.position()
