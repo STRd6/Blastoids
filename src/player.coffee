@@ -70,7 +70,7 @@ Player = (I) ->
 
     I.hflip = (I.heading > 2*Math.TAU/8 || I.heading < -2*Math.TAU/8)
 
-    cycle = (I.age/4).floor() % 8
+    cycle = (I.age/3).floor() % 8
     if -Math.TAU/8 <= I.heading <= Math.TAU/8
       facingOffset = 1
     else if -3*Math.TAU/8 <= I.heading <= -Math.TAU/8
@@ -81,7 +81,7 @@ Player = (I) ->
       facingOffset = 1
 
     if I.velocity.equal(Point(0, 0))
-      cylce = 0
+      cycle = 0
     else
       cycle += 1
 
