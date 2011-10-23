@@ -1,6 +1,6 @@
 HomingMissile = (I={}) ->
   Object.reverseMerge I,
-    damage: 10
+    damage: 2
     duration: 40
     height: 24
     includedModules: ["Durable", "Rotatable"]
