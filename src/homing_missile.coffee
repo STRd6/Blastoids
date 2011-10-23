@@ -3,6 +3,7 @@ HomingMissile = (I={}) ->
     height: 24
     includedModules: ["Movable"]
     sprite: "homing_missile"
+    radius: 12
     width: 24
     velocity: Point(3, 0)
 
@@ -12,10 +13,10 @@ HomingMissile = (I={}) ->
     players = engine.find("Player")
     hits = []
 
-    objects.each (object) ->
-      unless object == I.source    
+    players.each (player) ->
+      unless player == I.source    
 
-      if point = Collision.circular(self, object)
+      if point = Collision.circular(self, player)
         distanceSquared = Point.distanceSquared(I.start, point)
         hits.push {distanceSquared, point, object}  
 
