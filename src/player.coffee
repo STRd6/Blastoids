@@ -156,6 +156,7 @@ Player = (I) ->
       engine.add
         class: "Player"
         team: I.team
+        id: I.id
 
   return self
 
