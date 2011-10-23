@@ -33,8 +33,13 @@ Weapon.Weapons =
   homingMissile: Weapon
     cooldown: 15
     fire: (source, direction) ->
+      position = source.position().add(Point(Math.cos(direction), Math.sin(direction)).scale(30))
+
       engine.add
         class: "HomingMissile"
+        x: position.x
+        y: position.y
+        source: source
 
   machineGun: Weapon
     cooldown: 3
