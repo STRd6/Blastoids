@@ -1,9 +1,7 @@
 Mine = (I={}) ->
   Object.reverseMerge I,
     countdown: 40
-    height: 24
     sprite: "mine"
-    width: 24
 
   self = GameObject(I)
 
