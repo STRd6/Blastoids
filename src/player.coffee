@@ -65,7 +65,7 @@ Player = (I) ->
       activeWeapon = 3
     if controller.actionDown("START")
       activeWeapon = 4
-    if justPressed.m
+    if controller.actionDown("SELECT")
       activeWeapon = 5
 
     I.hflip = (I.heading > 2*Math.TAU/8 || I.heading < -2*Math.TAU/8)
