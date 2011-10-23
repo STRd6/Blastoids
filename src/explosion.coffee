@@ -9,7 +9,7 @@ Explosion = (I={}) ->
     velocity: Point(0, 0)
 
   # Inherit from game object
-  self = GameObject(I)
+  self = Base(I)
 
   self.bind "update", ->
     I.radius += I.deltaRadius
