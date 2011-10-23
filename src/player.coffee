@@ -3,7 +3,7 @@ Player = (I) ->
 
   activeWeapon = 0
 
-  SPRITES_WIDE = 16
+  SPRITES_WIDE = 3
 
   animationStep = 0
   standingOffset = Point(0, -16)
@@ -26,6 +26,8 @@ Player = (I) ->
     velocity: Point(0, 0)
 
   window.playerScores[I.team] = 0
+
+  sprites = window.playerSprites[I.team]
 
   controller = Joysticks.getController(I.team)
 
@@ -68,19 +70,22 @@ Player = (I) ->
 
     I.hflip = (I.heading > 2*Math.TAU/8 || I.heading < -2*Math.TAU/8)
 
-    cycle = (I.age/4).floor() % 2
+    cycle = (I.age/4).floor() % 8
     if -Math.TAU/8 <= I.heading <= Math.TAU/8
-      facingOffset = 0
+      facingOffset = 1
     else if -3*Math.TAU/8 <= I.heading <= -Math.TAU/8
-      facingOffset = 4
-    else if Math.TAU/8 < I.heading <= 3*Math.TAU/8
       facingOffset = 2
-    else
+    else if Math.TAU/8 < I.heading <= 3*Math.TAU/8
       facingOffset = 0
+    else
+      facingOffset = 1
 
-    teamColor = I.team * SPRITES_WIDE
+    if I.velocity.equal(Point(0, 0))
+      cylce = 0
+    else
+      cycle += 1
 
-    spriteIndex = cycle + facingOffset + teamColor
+    spriteIndex = cycle * SPRITES_WIDE + facingOffset
 
     I.spriteOffset = standingOffset
     I.sprite = sprites[spriteIndex]  
