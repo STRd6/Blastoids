@@ -25,7 +25,7 @@ Weapon.Weapons =
         direction = (Math.TAU * n) / 3
 
         engine.add
-          class: "blade"
+          class: "Blade"
           Point(Math.cos(direction), Math.sin(direction))
 
   homingMissile: Weapon
