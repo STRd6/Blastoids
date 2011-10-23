@@ -17,18 +17,13 @@ background = Sprite.loadByName "ice_bg"
 
 physics = Physics()
 
+Level.load Level.data.rand()
+
 6.times (i) ->
   engine.add
     class: "Player"
     team: i
     id: i
-
-engine.add
-  class: "Flag"
-  x: 150
-  y: 150
-
-Level.load Level.data.rand()
 
 bg = engine.add
   sprite: background
