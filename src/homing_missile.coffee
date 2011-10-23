@@ -1,7 +1,7 @@
 HomingMissile = (I={}) ->
   Object.reverseMerge I,
     damage: 10
-    duration: 20
+    duration: 40
     height: 24
     includedModules: ["Durable", "Rotatable"]
     sprite: "homing_missile"
@@ -12,7 +12,7 @@ HomingMissile = (I={}) ->
   self = GameObject(I)
 
   self.bind "collide", (other) ->
-    if other != I.source
+    if other != self
       self.destroy() 
 
   self.bind "update", ->
