@@ -18,6 +18,12 @@ Weapon = (I={}) ->
   return self
 
 Weapon.Weapons =
+  blade: Weapon
+    cooldown: 200
+    fire: (source, direction) ->
+      engine.add
+        class: "blade"
+
   machineGun: Weapon
     cooldown: 3
     fire: (source, direction) ->
