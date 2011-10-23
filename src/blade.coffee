@@ -9,7 +9,6 @@ Blade = (I={}) ->
     source: self
     speed: 40
     sprite: "blade"
-    velocity: Point(Math.cos(rotationSpeed + direction), Math.sin(rotationSpeed + direction))
     x: I.x
     y: I.y
 
