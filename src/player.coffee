@@ -153,6 +153,7 @@ Player = (I) ->
           source: self
           x: I.x
           y: I.y
+
     (direction) ->
       rotationSpeed = I.age / 3
 
