@@ -28,7 +28,7 @@ engine.add
   x: 150
   y: 150
 
-Level.load Level.data[1]
+Level.load Level.data.rand()
 
 bg = engine.add
   sprite: background
