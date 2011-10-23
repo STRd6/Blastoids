@@ -67,6 +67,8 @@ Player = (I) ->
       activeWeapon = 2
     if controller.actionDown("Y")
       activeWeapon = 3
+    if controller.actionDown("START")
+      activeWeapon = 4
 
     I.hflip = (I.heading > 2*Math.TAU/8 || I.heading < -2*Math.TAU/8)
 
@@ -110,6 +112,9 @@ Player = (I) ->
 
         Sound.play "pew"
 
+        # TODO: Compute hit destination
+        # and apply damage
+
         engine.add
           class: "Shot"
           damage: 4
@@ -123,12 +128,12 @@ Player = (I) ->
 
         Sound.play "shotgun"
 
-        6.times ->
+        (3 + rand(4)).times ->
           angle = Math.atan2(direction.y, direction.x) 
           angle += rand() * (Math.TAU / 24) - (Math.TAU / 48)        
           engine.add
             class: "Shot"
-            damage: 6
+            damage: 2
             direction: Point.fromAngle(angle)
             source: self
             start: self.position()
