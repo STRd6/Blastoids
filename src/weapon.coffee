@@ -28,6 +28,12 @@ Weapon.Weapons =
           class: "blade"
           Point(Math.cos(direction), Math.sin(direction))
 
+  homingMissile: Weapon
+    cooldown: 15
+    fire: (source, direction) ->
+      engine.add
+        class: "HomingMissile"
+
   machineGun: Weapon
     cooldown: 3
     fire: (source, direction) ->
