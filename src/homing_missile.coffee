@@ -18,6 +18,9 @@ HomingMissile = (I={}) ->
         distanceSquared = Point.distanceSquared(I.start, point)
         hits.push {distanceSquared, point, object}  
 
+      hits.sort (a, b) ->
+        a.distanceSquared - b.distanceSquared
+
     target = currentLevel.nearestTarget(self.position(), I.collisionType);
 
   return self
