@@ -26,6 +26,7 @@ HomingMissile = (I={}) ->
           targetPosition = target.position()  
 
           direction = Math.atan2(targetPosition.y, targetPosition.x)
+          I.rotation = direction
 
           if direction
             I.velocity = Point((I.velocity.x * 0.95) + Math.cos(direction), (I.velocity.y * 0.95) + Math.sin(direction))
