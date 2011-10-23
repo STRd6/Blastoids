@@ -19,9 +19,6 @@ HomingMissile = (I={}) ->
     players = engine.find("Player")
     targets = []
 
-    log I.x
-    log I.y
-
     players.each (player) ->
       unless player == I.source 
         distanceSquared = Point.distanceSquared(I, player.position())
