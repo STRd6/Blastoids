@@ -21,6 +21,7 @@ physics = Physics()
   engine.add
     class: "Player"
     team: i
+    id: i
 
 engine.add
   class: "Flag"
