@@ -1,6 +1,6 @@
 Mine = (I={}) ->
   Object.reverseMerge I,
-    countdown: 40
+    countdown: 60
     sprite: "mine"
 
   self = GameObject(I)
@@ -23,15 +23,13 @@ Mine = (I={}) ->
       color: "transparent"
       velocity: Point(0, 0)
 
-    10.times (n) ->
-      angle = (Math.TAU * (n + 1)) / 10 
+    20.times (n) ->
+      angle = (Math.TAU * (n + 1)) / 20 
 
       engine.add
         class: "Shot"
-        damage: 2
+        damage: 15
         direction: Point.fromAngle(angle)
-        x: I.x
-        y: I.y  
         source: self  
         start: self.position()
 
