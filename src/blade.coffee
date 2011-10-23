@@ -9,8 +9,6 @@ Blade = (I={}) ->
     source: self
     speed: 40
     sprite: "blade"
-    x: I.x
-    y: I.y
 
   self = GameObject(I)
 
