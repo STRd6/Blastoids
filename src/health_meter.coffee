@@ -9,7 +9,7 @@ HealthMeter = (I, self) ->
   self.bind "draw", (canvas) ->
     ratio = I.health / I.maxHealth
 
-    start = Point(0, 0)
+    start = Point(-4, -6)
 
     padding = 1
     maxWidth = 40
