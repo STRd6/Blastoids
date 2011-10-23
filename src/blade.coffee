@@ -4,7 +4,8 @@ Blade = (I={}) ->
     duration: 200
     includedModules: ["Durable", "Rotatable"]
     radius: 5
-    rotation: -Math.PI * engine.I.age / 100
+    rotation: 0
+    rotationVelocity: Math.TAU / 128
     source: self
     speed: 40
     sprite: "blade"
