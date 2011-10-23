@@ -23,10 +23,12 @@ Weapon.Weapons =
     fire: (source, direction) ->
       3.times (n) ->
         direction = (Math.TAU * n) / 3
+        position = source.position().add(Point(Math.cos(direction), Math.sin(direction)).scale(30))
 
         engine.add
           class: "Blade"
-          Point(Math.cos(direction), Math.sin(direction))
+          x: position.x
+          y: position.y
 
   homingMissile: Weapon
     cooldown: 15
