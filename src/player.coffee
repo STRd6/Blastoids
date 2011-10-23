@@ -93,7 +93,7 @@ Player = (I) ->
 
     I.velocity = movement.scale(I.speed)
 
-    I.crosshairPosition = controller.position(1).norm().scale(50)
+    I.crosshairPosition = controller.position(1).norm().scale(75)
 
     unless I.velocity.magnitude() == 0
       I.heading = Point.direction(Point(0, 0), I.velocity)
