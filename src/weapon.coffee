@@ -60,7 +60,7 @@ Weapon.Weapons =
   shotgun: Weapon
     cooldown: 20
     fire: (source, direction) ->
-      Sound.play "shotgun"
+      Sound.play "bls_sfx_shotgun_01"
 
       6.times ->
         angle = Math.atan2(direction.y, direction.x) 
