@@ -18,7 +18,7 @@ Weapon = (I={}) ->
   return self
 
 Weapon.Weapons =
-  machineGun:
+  machineGun: Weapon
     cooldown: 3
     fire: (source, direction) ->
       angle = Math.atan2(direction.y, direction.x)
@@ -33,7 +33,7 @@ Weapon.Weapons =
       start: source.position()
       direction: Point.fromAngle(angle)
 
-  shotgun:
+  shotgun: Weapon
     cooldown: 20
     fire: (source, direction) ->
       Sound.play "shotgun"
@@ -48,7 +48,7 @@ Weapon.Weapons =
           source: self
           start: self.position()
 
-  starDetonator:
+  starDetonator: Weapon
     cooldown: 15
     fire: (source, direction) ->
 
