@@ -31,6 +31,11 @@ Player = (I) ->
 
   controller = Joysticks.getController(I.team)
 
+  # TODO: Switch team to id
+  if spawnPoint = window.spawnPoints?[I.id]
+    I.x = spawnPoint.x
+    I.y = spawnPoint.y
+
   actionDown = (actions...) ->
     if controller
       controller.actionDown(actions...)
