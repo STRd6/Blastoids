@@ -11,7 +11,7 @@ HomingMissile = (I={}) ->
 
   self.bind "update", ->
     players = engine.find("Player")
-    hits = []
+    targets = []
 
     players.each (player) ->
       unless player == self 
