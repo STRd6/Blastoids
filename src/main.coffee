@@ -27,7 +27,7 @@ engine.add
   x: 150
   y: 150
 
-Level.load Level.data[0]
+Level.load Level.data[1]
 
 bg = engine.add
   sprite: background
