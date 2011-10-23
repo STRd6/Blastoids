@@ -50,6 +50,8 @@ Player = (I) ->
     if justPressed.m
       engine.add
         class: "Mine"
+        x: I.x
+        y: I.y
 
     if I.hasFlag
       window.playerScores[I.team] += 1
