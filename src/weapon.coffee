@@ -33,6 +33,14 @@ Weapon.Weapons =
       start: source.position()
       direction: Point.fromAngle(angle)
 
+  mine: Weapon
+    cooldown: 40
+    fire: (source, direction) ->
+      engine.add
+        class: "Mine"
+        x: source.position().x
+        y: source.position().y
+
   shotgun: Weapon
     cooldown: 20
     fire: (source, direction) ->
@@ -45,8 +53,8 @@ Weapon.Weapons =
           class: "Shot"
           damage: 12
           direction: Point.fromAngle(angle)
-          source: self
-          start: self.position()
+          source: source
+          start: source.position()
 
   starDetonator: Weapon
     cooldown: 15
