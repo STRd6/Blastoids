@@ -1,7 +1,6 @@
 HomingMissile = (I={}) ->
   Object.reverseMerge I,
     height: 24
-    includedModules: ["Movable"]
     sprite: "homing_missile"
     radius: 12
     width: 24
@@ -28,5 +27,11 @@ HomingMissile = (I={}) ->
 
           if direction
             I.velocity = Point((I.velocity.x * 0.95) + Math.cos(direction), (I.velocity.y * 0.95) + Math.sin(direction))
+
+    I.x += I.velocity.x
+    I.y += I.velocity.y
+
+    log I.x
+    log I.y
 
   return self
