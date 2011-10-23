@@ -44,9 +44,11 @@ Shot = (I={}) ->
         I.end = point
         object?.trigger("collide", self)
 
+        # TODO: Different effects based on object type
         engine.add
           class: "ParticleEffect"
           color: "pink"
+          particleCount: 2
           x: point.x
           y: point.y
 
