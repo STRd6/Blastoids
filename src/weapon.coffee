@@ -21,8 +21,12 @@ Weapon.Weapons =
   blade: Weapon
     cooldown: 200
     fire: (source, direction) ->
-      engine.add
-        class: "blade"
+      3.times (n) ->
+        direction = (Math.TAU * n) / 3
+
+        engine.add
+          class: "blade"
+          Point(Math.cos(direction), Math.sin(direction))
 
   machineGun: Weapon
     cooldown: 3
