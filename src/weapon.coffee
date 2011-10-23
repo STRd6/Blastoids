@@ -48,3 +48,7 @@ Weapon.Weapons =
           source: self
           start: self.position()
 
+  starDetonator:
+    cooldown: 15
+    fire: (source, direction) ->
+
