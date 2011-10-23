@@ -60,13 +60,13 @@ Weapon.Weapons =
         y: source.position().y
 
   shotgun: Weapon
-    cooldown: 20
+    cooldown: 30
     fire: (source, direction) ->
       Sound.play "bls_sfx_shotgun_01"
 
-      6.times ->
+      7.times ->
         angle = Math.atan2(direction.y, direction.x) 
-        angle += rand() * (Math.TAU / 24) - (Math.TAU / 48)        
+        angle += rand() * (Math.TAU / 20) - (Math.TAU / 40)        
         engine.add
           class: "Shot"
           damage: 12
