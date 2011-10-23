@@ -48,8 +48,8 @@ Weapon.Weapons =
         class: "Shot"
         damage: 4
         source: source
-      start: source.position()
-      direction: Point.fromAngle(angle)
+        start: source.position()
+        direction: Point.fromAngle(angle)
 
   mine: Weapon
     cooldown: 40
