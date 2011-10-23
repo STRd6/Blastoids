@@ -1,17 +1,19 @@
 HomingMissile = (I={}) ->
-  # Set some default properties
   Object.reverseMerge I,
     height: 24
     sprite: "homing_missile"
     width: 24
     velocity: Point(3, 0)
 
-  # Inherit from game object
   self = Bullet(I)
 
-  # Add events and methods here
   self.bind "update", ->
-    ; # Add update method behavior
+    players = engine.find("Player")
 
-  # We must always return self as the last line
+    if point = Collision.rayCircle(I.start, I.direction, object)
+      distanceSquared = Point.distanceSquared(I.start, point)
+      hits.push {distanceSquared, point, object}  
+
+    target = currentLevel.nearestTarget(self.position(), I.collisionType);
+
   return self
