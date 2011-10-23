@@ -9,7 +9,7 @@ HomingMissile = (I={}) ->
     width: 24
     velocity: Point(0, 0)
 
-  self = GameObject(I)
+  self = Base(I)
 
   self.bind "collide", (other) ->
     if other != self
@@ -37,8 +37,5 @@ HomingMissile = (I={}) ->
 
           if direction
             I.velocity = Point((I.velocity.x * 0.95) + Math.cos(direction), (I.velocity.y * 0.95) + Math.sin(direction))
-
-    I.x += I.velocity.x
-    I.y += I.velocity.y
 
   return self
