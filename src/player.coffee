@@ -188,7 +188,7 @@ Player = (I) ->
           y: I.y
     () ->
       if I.cooldowns.shoot == 0
-        I.cooldowns.shoot = 16
+        I.cooldowns.shoot = 24
 
         engine.add
           class: "HomingMissile"
