@@ -1,12 +1,14 @@
 HomingMissile = (I={}) ->
   Object.reverseMerge I,
+    damage: 10
     height: 24
+    includedModules: ["Rotatable"]
     sprite: "homing_missile"
     radius: 12
     width: 24
     velocity: Point(0, 0)
 
-  self = Bullet(I)
+  self = GameObject(I)
 
   self.bind "update", ->
     players = engine.find("Player")
