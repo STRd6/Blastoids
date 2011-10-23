@@ -5,6 +5,7 @@ HomingMissile = (I={}) ->
     sprite: "homing_missile"
     radius: 12
     width: 24
+    velocity: Point(0, 0)
 
   self = Bullet(I)
 
