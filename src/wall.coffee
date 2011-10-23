@@ -62,9 +62,12 @@ Wall = (I={}) ->
       delta = I.start.subtract(ray.start)
 
       t = ray.direction.cross(delta) / crossProduct
+      s = self.direction().cross(delta) / crossProduct
 
-      if 0 <= t <= 1
-        Point.interpolate(I.start, I.end, t)
+      # In front of ray
+      if 0 <= s
+        if 0 <= t <= 1
+          Point.interpolate(I.start, I.end, t)
 
   # Add events and methods here
   self.bind "update", ->
