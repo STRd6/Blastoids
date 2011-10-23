@@ -102,7 +102,7 @@ Player = (I) ->
       I.heading = Point.direction(Point(0, 0), I.velocity)
 
     if controller.axis(5) > 16000 || controller.axis(4) > 16000
-      Weapon.Weapons[activeWeapon]?(self, I.crosshairPosition.norm())
+      Weapon.Weapons[activeWeapon]?.fire(self, I.crosshairPosition.norm())
 
   self.bind "collide", (other) ->
     if other.I.source != self and other.I.active
