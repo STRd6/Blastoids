@@ -47,12 +47,6 @@ Player = (I) ->
   self.include HealthMeter
 
   self.bind "update", ->
-    if justPressed.m
-      engine.add
-        class: "Mine"
-        x: I.x
-        y: I.y
-
     if I.hasFlag
       window.playerScores[I.team] += 1
 
