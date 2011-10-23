@@ -21,14 +21,16 @@ HomingMissile = (I={}) ->
 
     players.each (player) ->
       unless player == I.source 
-        distanceSquared = Point.distanceSquared(Point(I.x, I.y), Point(player.I.x, player.I.y))
+        distanceSquared = Point.distanceSquared(I, player.position())
         targets.push {distance: distanceSquared, player: player}  
 
         targets.sort (a, b) ->
           a.distance - b.distance
 
-        if target = targets.first().player
-          targetPosition = Point(target.I.x, target.I.y)  
+        if target = targets.first()
+          player = target.player
+
+          targetPosition = player.position().subtract(I)  
 
           direction = Math.atan2(targetPosition.y, targetPosition.x)
           I.rotation = direction
