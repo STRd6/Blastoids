@@ -187,6 +187,7 @@ Player = (I) ->
 
         engine.add
           class: "HomingMissile"
+          source: self
           x: I.x
           y: I.y
   ]  
