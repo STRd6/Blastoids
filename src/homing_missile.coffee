@@ -9,10 +9,14 @@ HomingMissile = (I={}) ->
 
   self.bind "update", ->
     players = engine.find("Player")
+    hits = []
 
-    if point = Collision.rayCircle(I.start, I.direction, object)
-      distanceSquared = Point.distanceSquared(I.start, point)
-      hits.push {distanceSquared, point, object}  
+    objects.each (object) ->
+      unless object == I.source    
+
+      if point = Collision.circular(self, objects)
+        distanceSquared = Point.distanceSquared(I.start, point)
+        hits.push {distanceSquared, point, object}  
 
     target = currentLevel.nearestTarget(self.position(), I.collisionType);
 
