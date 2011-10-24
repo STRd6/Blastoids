@@ -115,7 +115,7 @@ Player = (I) ->
       if damage = other.I.damage
         I.health -= damage
 
-        if I.health <= 0
+        if I.health <= 0 && I.active
           owner = other.I.owner
 
           if owner == self
