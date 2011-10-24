@@ -29,6 +29,7 @@ Weapon.Weapons =
         y: position.y
         source: source
         owner: source
+        velocity: direction.scale(10)
 
   machineGun: Weapon
     cooldown: 3
