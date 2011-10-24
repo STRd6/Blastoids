@@ -25,6 +25,9 @@ HomingMissile = (I={}) ->
         x: I.x
         y: I.y 
 
+  self.bind "wallCollide", ->
+    self.destroy()
+
   self.bind "update", ->
     if I.age >= I.duration && I.active
       self.destroy()
