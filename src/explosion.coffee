@@ -18,6 +18,9 @@ Explosion = (I={}) ->
   # to fix serializing and de-serializing
 
   # self.bind "create", ->  
+
+  Sound.play ["bls_sfx_explosion1_01", "bls_sfx_explosion2_01", "bls_sfx_explosion3_01"].rand()
+
   20.times (n) ->
     angle = (Math.TAU * (n + 1)) / 20 
 
