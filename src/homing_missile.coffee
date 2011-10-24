@@ -1,9 +1,9 @@
 HomingMissile = (I={}) ->
   Object.reverseMerge I,
-    damage: 10
-    duration: 40
+    damage: 0
+    duration: 90
     height: 24
-    includedModules: ["Durable", "Rotatable"]
+    includedModules: ["Rotatable"]
     sprite: "homing_missile"
     radius: 12
     width: 24
@@ -12,12 +12,12 @@ HomingMissile = (I={}) ->
   self = Base(I)
 
   self.bind "collide", (other) ->
-    if other != I.source
+    if other != I.source && I.active
       self.destroy()
 
       engine.add
         class: "Explosion"
-        damage: 5
+        damage: 3
         deltaRadius: 3
         particleCount: 2
         particleDamage: 2
@@ -26,27 +26,31 @@ HomingMissile = (I={}) ->
         y: I.y 
 
   self.bind "update", ->
+    if I.age >= I.duration && I.active
+      self.destroy()
+      return
+
     players = engine.find("Player")
     targets = []
 
     players.each (player) ->
       unless player == I.source 
         distanceSquared = Point.distanceSquared(I, player.position())
-        targets.push {distance: distanceSquared, player: player}  
+        targets.push {distance: distanceSquared, player: player}
 
-        targets.sort (a, b) ->
-          a.distance - b.distance
+    targets.sort (a, b) ->
+      a.distance - b.distance
 
-        if target = targets.first()
-          player = target.player
+    if target = targets.first()
+      player = target.player
 
-          targetPosition = player.position().subtract(I)  
+      targetPosition = player.position().subtract(I)  
 
-          direction = Math.atan2(targetPosition.y, targetPosition.x)
-          I.rotation = direction
+      direction = Math.atan2(targetPosition.y, targetPosition.x)
+      I.rotation = direction
 
-          if direction
-            I.velocity = Point((I.velocity.x * 0.95) + Math.cos(direction), (I.velocity.y * 0.95) + Math.sin(direction))
+      if direction
+        I.velocity = Point((I.velocity.x * 0.95) + Math.cos(direction), (I.velocity.y * 0.95) + Math.sin(direction))
 
   Sound.play "bls_sfx_rocketlaunch_01"
 
