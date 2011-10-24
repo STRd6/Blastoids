@@ -32,7 +32,12 @@ Player = (I) ->
   controller = Joysticks.getController(I.team)
 
   # TODO: Switch team to id
-  if spawnPoint = window.spawnPoints?[I.id]
+  spawnPoint = window.spawnPoints?[I.id]
+
+  if I.randRespawn
+    spawnPoint = window.spawnPoints.rand()
+
+  if spawnPoint
     I.x = spawnPoint.x
     I.y = spawnPoint.y
 
@@ -157,6 +162,7 @@ Player = (I) ->
         class: "Player"
         team: I.team
         id: I.id
+        randRespawn: true
 
   return self
 
