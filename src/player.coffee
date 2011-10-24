@@ -70,13 +70,9 @@ Player = (I) ->
     if controller.actionDown("X")
       activeWeapon = "shotgun"
     if controller.actionDown("B")
-      activeWeapon = ""
-    if controller.actionDown("Y")
-      activeWeapon = "blade"
-    if controller.actionDown("START")
-      activeWeapon = "mine"
-    if controller.actionDown("SELECT")
       activeWeapon = "homingMissile"
+    if controller.actionDown("Y")
+      activeWeapon = "mine"
 
     I.hflip = (I.heading > 2*Math.TAU/8 || I.heading < -2*Math.TAU/8)
 
