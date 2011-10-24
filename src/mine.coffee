@@ -14,6 +14,7 @@ Mine = (I={}) ->
   self.bind 'destroy', ->
     engine.add
       class: "Explosion"
+      owner: I.owner
       x: I.x
       y: I.y
 
