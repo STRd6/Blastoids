@@ -119,6 +119,13 @@ Player = (I) ->
         I.health -= damage
 
         if I.health <= 0
+          owner = other.I.owner
+
+          if owner == self
+            I.score -= 1
+          else 
+            owner?.I.score += 1 
+
           self.destroy()
 
   self.bind "drawDebug", (canvas) ->
