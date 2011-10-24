@@ -24,12 +24,12 @@ Explosion = (I={}) ->
   Sound.play ["bls_sfx_explosion1_01", "bls_sfx_explosion2_01", "bls_sfx_explosion3_01"].rand()
 
   I.particleCount.times (n) ->
-    angle = (Math.TAU * (n + 1)) / I.particleCount
+    angle = Math.TAU * rand()
 
     engine.add
       class: "Shot"
       damage: I.particleDamage
-      direction: Point.fromAngle(angle + rand() * Math.TAU / 16)
+      direction: Point.fromAngle(angle)
       source: I.source
       start: self.position()
 
