@@ -497,6 +497,17 @@ Array.prototype.wrap = function(start, length) {
 Partitions the elements into two groups: those for which the iterator returns
 true, and those for which it returns false.
 
+<code><pre>
+[evens, odds] = [1, 2, 3, 4].partition (n) ->
+  n.even()
+
+evens
+# => [2, 4]
+
+odds
+# => [1, 3]
+</pre></code>
+
 @name partition
 @methodOf Array#
 @param {Function} iterator
@@ -530,6 +541,11 @@ Array.prototype.select = function(iterator, context) {
 };
 /**
 Return the group of elements that are not in the passed in set.
+
+<code><pre>
+[1, 2, 3, 4].without ([2, 3])
+# => [1, 4]
+</pre></code>
 
 @name without
 @methodOf Array#
@@ -2277,7 +2293,37 @@ Object.isObject = function(object) {
     */
   };
   Point.distance = function(p1, p2) {
-    return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+    return Math.sqrt(Point.distanceSquared(p1, p2));
+  };
+  /**
+  <code><pre>
+  pointA = Point(2, 3)
+  pointB = Point(9, 2)
+
+  Point.distanceSquared(pointA, pointB)
+  # => 50
+  </pre></code>
+
+  @name distanceSquared
+  @fieldOf Point
+  @param {Point} p1
+  @param {Point} p2
+  @returns {Number} The square of the Euclidean distance between two points.
+  */
+  Point.distanceSquared = function(p1, p2) {
+    return Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2);
+  };
+  /**
+  @name interpolate
+  @fieldOf Point
+
+  @param {Point} p1
+  @param {Point} p2
+  @param {Number} t
+  @returns {Point} A point along the path from p1 to p2
+  */
+  Point.interpolate = function(p1, p2, t) {
+    return p2.subtract(p1).scale(t).add(p1);
   };
   /**
   Construct a point on the unit circle for the given angle.
@@ -3978,7 +4024,9 @@ Bounded module
 @param {Core} self Reference to including object
 */var Bounded;
 Bounded = function(I, self) {
-  I || (I = {});
+  if (I == null) {
+    I = {};
+  }
   Object.reverseMerge(I, {
     x: 0,
     y: 0,
@@ -4006,8 +4054,18 @@ Bounded = function(I, self) {
     @methodOf Bounded#
     @returns {Point} The position of this object
     */
-    position: function() {
-      return Point(I.x, I.y);
+    position: function(newPosition) {
+      if (newPosition != null) {
+        I.x = newPosition.x;
+        return I.y = newPosition.y;
+      } else {
+        return Point(I.x, I.y);
+      }
+    },
+    changePosition: function(delta) {
+      I.x += delta.x;
+      I.y += delta.y;
+      return self;
     },
     /**
     Does a check to see if this object is overlapping
@@ -4158,8 +4216,8 @@ Bounded = function(I, self) {
     @methodOf Bounded#
     @returns {Point} The middle of the calling object
     */
-    center: function() {
-      return self.position();
+    center: function(newCenter) {
+      return self.position(newCenter);
     },
     /**
     Return the circular bounds of the object. The circle is
@@ -4190,14 +4248,191 @@ Bounded = function(I, self) {
     }
   };
 };;
-/**
-Collision holds many useful class methods for checking geometric overlap of various objects.
-
-@name Collision
-@namespace
-*/var Collision;
-Collision = {
+(function() {
   /**
+  Use this to handle generic rectangular collisions among game object a-la Flixel.
+
+  @name Collidable
+  @module
+  @constructor
+  */  var ANY, CEILING, Collidable, DOWN, FLOOR, LEFT, NONE, RIGHT, UP, WALL, _ref, _ref2;
+  Collidable = function(I, self) {
+    Object.reverseMerge(I, {
+      allowCollisions: ANY,
+      immovable: false,
+      touching: NONE,
+      velocity: Point(0, 0),
+      mass: 1,
+      elasticity: 0
+    });
+    self.attrAccessor("immovable", "velocity", "mass", "elasticity");
+    return {
+      solid: function(newSolid) {
+        if (newSolid != null) {
+          if (newSolid) {
+            return I.allowCollisions = ANY;
+          } else {
+            return I.allowCollisions = NONE;
+          }
+        } else {
+          return I.allowCollisions;
+        }
+      }
+    };
+  };
+  (typeof exports !== "undefined" && exports !== null ? exports : this)["Collidable"] = Collidable;
+  /**
+
+  */
+  _ref = Object.extend(Collidable, {
+    NONE: 0x0000,
+    LEFT: 0x0001,
+    RIGHT: 0x0010,
+    UP: 0x0100,
+    DOWN: 0x1000
+  }), NONE = _ref.NONE, LEFT = _ref.LEFT, RIGHT = _ref.RIGHT, UP = _ref.UP, DOWN = _ref.DOWN;
+  _ref2 = Object.extend(Collidable, {
+    FLOOR: DOWN,
+    WALL: LEFT | RIGHT,
+    CEILING: UP,
+    ANY: LEFT | RIGHT | UP | DOWN
+  }), ANY = _ref2.ANY, FLOOR = _ref2.FLOOR, WALL = _ref2.WALL, CEILING = _ref2.CEILING;
+  return Object.extend(Collidable, {
+    separate: function(a, b) {
+      var aBounds, aMass, aVelocity, average, bBounds, bMass, bVelocity, deltaVelocity, normal, overlap, pushA, pushB, relativeVelocity, totalMass;
+      if (a.immovable() && b.immovable()) {
+        return;
+      }
+      aBounds = a.bounds();
+      bBounds = b.bounds();
+      aVelocity = a.velocity();
+      bVelocity = b.velocity();
+      deltaVelocity = aVelocity.subtract(bVelocity);
+      overlap = Point(0, 0);
+      if (Collision.rectangular(aBounds, bBounds)) {
+        if (deltaVelocity.x > 0) {
+          overlap.x = aBounds.x + aBounds.width - bBounds.x;
+          if (!(a.I.allowCollisions & RIGHT) || !(b.I.allowCollisions & LEFT)) {
+            overlap.x = 0;
+          } else {
+            a.I.touching |= RIGHT;
+            b.I.touching |= LEFT;
+          }
+        } else if (deltaVelocity.x < 0) {
+          overlap.x = aBounds.x - bBounds.width - bBounds.x;
+          if (!(a.I.allowCollisions & LEFT) || !(b.I.allowCollisions & RIGHT)) {
+            overlap.x = 0;
+          } else {
+            a.I.touching |= LEFT;
+            b.I.touching |= RIGHT;
+          }
+        }
+        if (deltaVelocity.y > 0) {
+          overlap.y = aBounds.y + aBounds.height - bBounds.y;
+          if (!(a.I.allowCollisions & DOWN) || !(b.I.allowCollisions & UP)) {
+            overlap.y = 0;
+          } else {
+            a.I.touching |= DOWN;
+            b.I.touching |= UP;
+          }
+        } else if (deltaVelocity.y < 0) {
+          overlap.x = aBounds.y - bBounds.height - bBounds.y;
+          if (!(a.I.allowCollisions & UP) || !(b.I.allowCollisions & DOWN)) {
+            overlap.y = 0;
+          } else {
+            a.I.touching |= UP;
+            b.I.touching |= DOWN;
+          }
+        }
+      }
+      if (!overlap.equal(Point.ZERO)) {
+        if (!a.immovable() && !b.immovable()) {
+          a.changePosition(overlap.scale(-0.5));
+          b.changePosition(overlap.scale(+0.5));
+          relativeVelocity = aVelocity.subtract(bVelocity);
+          aMass = a.mass();
+          bMass = b.mass();
+          totalMass = bMass + aMass;
+          normal = overlap.norm();
+          pushA = normal.scale(-2 * (relativeVelocity.dot(normal) * (bMass / totalMass)));
+          pushB = normal.scale(+2 * (relativeVelocity.dot(normal) * (aMass / totalMass)));
+          average = pushA.add(pushB).scale(0.5);
+          pushA.subtract$(average).scale(a.elasticity());
+          pushB.subtract$(average).scale(b.elasticity());
+          a.I.velocity = average.add(pushA);
+          b.I.velocity = average.add(pushB);
+        } else if (!a.immovable()) {
+          a.changePosition(overlap.scale(-1));
+          a.I.velocity = bVelocity.subtract(aVelocity.scale(a.elasticity()));
+        } else if (!b.immovable()) {
+          b.changePosition(overlap);
+          b.I.velocity = aVelocity.subtract(bVelocity.scale(b.elasticity()));
+        }
+        return true;
+      }
+    }
+  });
+})();;
+(function() {
+  var Collision, collides;
+  collides = function(a, b) {
+    return Collision.rectangular(a.bounds(), b.bounds());
+  };
+  /**
+  Collision holds many useful class methods for checking geometric overlap of various objects.
+
+  @name Collision
+  @namespace
+  */
+  Collision = {
+    /**
+      Collision holds many useful class methods for checking geometric overlap of various objects.
+
+      <code><pre>
+      player = GameObject
+        x: 0
+        y: 0
+        width: 10
+        height: 10
+
+      enemy = GameObject
+        x: 5
+        y: 5
+        width: 10
+        height: 10
+
+      enemy2 = GameObject
+        x: -5
+        y: -5
+        width: 10
+        height: 10
+
+      Collision.collide(player, enemy, (p, e) -> ...)
+      # => callback is called once
+
+      Collision.collide(player, [enemy, enemy2], (p, e) -> ...)
+      # => callback is called twice
+      </pre></code>
+
+      @name collide
+      @methodOf Collision
+      @param {Object|Array} groupA An object or set of objects to check collisions with
+      @param {Object|Array} groupB An objcet or set of objects to check collisions with
+      @param {Function} callback The callback to call when an object of groupA collides 
+      with an object of groupB: (a, b) ->
+      */
+    collide: function(groupA, groupB, callback) {
+      groupA = [].concat(groupA);
+      groupB = [].concat(groupB);
+      return groupA.each(function(a) {
+        return groupB.each(function(b) {
+          if (collides(a, b)) {
+            return callback(a, b);
+          }
+        });
+      });
+    },
+    /**
     Takes two bounds objects and returns true if they collide (overlap), false otherwise.
     Bounds objects have x, y, width and height properties.
 
@@ -4227,160 +4462,162 @@ Collision = {
     @param {Object} b The second rectangle
     @returns {Boolean} true if the rectangles overlap, false otherwise
     */
-  rectangular: function(a, b) {
-    return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
-  },
-  /**
-  Takes two circle objects and returns true if they collide (overlap), false otherwise.
-  Circle objects have x, y, and radius.
+    rectangular: function(a, b) {
+      return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
+    },
+    /**
+    Takes two circle objects and returns true if they collide (overlap), false otherwise.
+    Circle objects have x, y, and radius.
 
-  <code><pre>
-  player = GameObject
-    x: 5
-    y: 5
-    radius: 10
+    <code><pre>
+    player = GameObject
+      x: 5
+      y: 5
+      radius: 10
 
-  enemy = GameObject
-    x: 10
-    y: 10
-    radius: 10
+    enemy = GameObject
+      x: 10
+      y: 10
+      radius: 10
 
-  farEnemy = GameObject
-    x: 500
-    y: 500
-    radius: 30
+    farEnemy = GameObject
+      x: 500
+      y: 500
+      radius: 30
 
-  Collision.circular(player, enemy)
-  # => true
+    Collision.circular(player, enemy)
+    # => true
 
-  Collision.circular(player, farEnemy)
-  # => false
-  </pre></code>
+    Collision.circular(player, farEnemy)
+    # => false
+    </pre></code>
 
-  @name circular
-  @methodOf Collision
-  @param {Object} a The first circle
-  @param {Object} b The second circle
-  @returns {Boolean} true is the circles overlap, false otherwise
-  */
-  circular: function(a, b) {
-    var dx, dy, r;
-    r = a.radius + b.radius;
-    dx = b.x - a.x;
-    dy = b.y - a.y;
-    return r * r >= dx * dx + dy * dy;
-  },
-  /**
-  Detects whether a line intersects a circle.
+    @name circular
+    @methodOf Collision
+    @param {Object} a The first circle
+    @param {Object} b The second circle
+    @returns {Boolean} true is the circles overlap, false otherwise
+    */
+    circular: function(a, b) {
+      var dx, dy, r;
+      r = a.radius + b.radius;
+      dx = b.x - a.x;
+      dy = b.y - a.y;
+      return r * r >= dx * dx + dy * dy;
+    },
+    /**
+    Detects whether a line intersects a circle.
 
-  <code><pre>
-  circle = engine.add
-    class: "circle"
-    x: 50
-    y: 50
-    radius: 10
+    <code><pre>
+    circle = engine.add
+      class: "circle"
+      x: 50
+      y: 50
+      radius: 10
 
-  Collision.rayCircle(Point(0, 0), Point(1, 0), circle)
-  # => true
-  </pre></code>
+    Collision.rayCircle(Point(0, 0), Point(1, 0), circle)
+    # => true
+    </pre></code>
 
-  @name rayCircle
-  @methodOf Collision
-  @param {Point} source The starting position
-  @param {Point} direction A vector from the point
-  @param {Object} target The circle 
-  @returns {Boolean} true if the line intersects the circle, false otherwise
-  */
-  rayCircle: function(source, direction, target) {
-    var dt, hit, intersection, intersectionToTarget, intersectionToTargetLength, laserToTarget, projection, projectionLength, radius;
-    radius = target.radius();
-    target = target.position();
-    laserToTarget = target.subtract(source);
-    projectionLength = direction.dot(laserToTarget);
-    if (projectionLength < 0) {
-      return false;
-    }
-    projection = direction.scale(projectionLength);
-    intersection = source.add(projection);
-    intersectionToTarget = target.subtract(intersection);
-    intersectionToTargetLength = intersectionToTarget.length();
-    if (intersectionToTargetLength < radius) {
-      hit = true;
-    }
-    if (hit) {
-      dt = Math.sqrt(radius * radius - intersectionToTargetLength * intersectionToTargetLength);
-      return hit = direction.scale(projectionLength - dt).add(source);
-    }
-  },
-  /**
-  Detects whether a line intersects a rectangle.
+    @name rayCircle
+    @methodOf Collision
+    @param {Point} source The starting position
+    @param {Point} direction A vector from the point
+    @param {Object} target The circle 
+    @returns {Boolean} true if the line intersects the circle, false otherwise
+    */
+    rayCircle: function(source, direction, target) {
+      var dt, hit, intersection, intersectionToTarget, intersectionToTargetLength, laserToTarget, projection, projectionLength, radius;
+      radius = target.radius();
+      target = target.position();
+      laserToTarget = target.subtract(source);
+      projectionLength = direction.dot(laserToTarget);
+      if (projectionLength < 0) {
+        return false;
+      }
+      projection = direction.scale(projectionLength);
+      intersection = source.add(projection);
+      intersectionToTarget = target.subtract(intersection);
+      intersectionToTargetLength = intersectionToTarget.length();
+      if (intersectionToTargetLength < radius) {
+        hit = true;
+      }
+      if (hit) {
+        dt = Math.sqrt(radius * radius - intersectionToTargetLength * intersectionToTargetLength);
+        return hit = direction.scale(projectionLength - dt).add(source);
+      }
+    },
+    /**
+    Detects whether a line intersects a rectangle.
 
-  <code><pre>
-  rect = engine.add
-    class: "circle"
-    x: 50
-    y: 50
-    width: 20
-    height: 20
+    <code><pre>
+    rect = engine.add
+      class: "circle"
+      x: 50
+      y: 50
+      width: 20
+      height: 20
 
-  Collision.rayRectangle(Point(0, 0), Point(1, 0), rect)
-  # => true
-  </pre></code>
+    Collision.rayRectangle(Point(0, 0), Point(1, 0), rect)
+    # => true
+    </pre></code>
 
-  @name rayRectangle
-  @methodOf Collision
-  @param {Point} source The starting position
-  @param {Point} direction A vector from the point
-  @param {Object} target The rectangle
-  @returns {Boolean} true if the line intersects the rectangle, false otherwise
-  */
-  rayRectangle: function(source, direction, target) {
-    var areaPQ0, areaPQ1, hit, p0, p1, t, tX, tY, xval, xw, yval, yw, _ref, _ref2;
-    xw = target.xw;
-    yw = target.yw;
-    if (source.x < target.x) {
-      xval = target.x - xw;
-    } else {
-      xval = target.x + xw;
-    }
-    if (source.y < target.y) {
-      yval = target.y - yw;
-    } else {
-      yval = target.y + yw;
-    }
-    if (direction.x === 0) {
-      p0 = Point(target.x - xw, yval);
-      p1 = Point(target.x + xw, yval);
-      t = (yval - source.y) / direction.y;
-    } else if (direction.y === 0) {
-      p0 = Point(xval, target.y - yw);
-      p1 = Point(xval, target.y + yw);
-      t = (xval - source.x) / direction.x;
-    } else {
-      tX = (xval - source.x) / direction.x;
-      tY = (yval - source.y) / direction.y;
-      if ((tX < tY || ((-xw < (_ref = source.x - target.x) && _ref < xw))) && !((-yw < (_ref2 = source.y - target.y) && _ref2 < yw))) {
+    @name rayRectangle
+    @methodOf Collision
+    @param {Point} source The starting position
+    @param {Point} direction A vector from the point
+    @param {Object} target The rectangle
+    @returns {Boolean} true if the line intersects the rectangle, false otherwise
+    */
+    rayRectangle: function(source, direction, target) {
+      var areaPQ0, areaPQ1, hit, p0, p1, t, tX, tY, xval, xw, yval, yw, _ref, _ref2;
+      xw = target.xw;
+      yw = target.yw;
+      if (source.x < target.x) {
+        xval = target.x - xw;
+      } else {
+        xval = target.x + xw;
+      }
+      if (source.y < target.y) {
+        yval = target.y - yw;
+      } else {
+        yval = target.y + yw;
+      }
+      if (direction.x === 0) {
         p0 = Point(target.x - xw, yval);
         p1 = Point(target.x + xw, yval);
-        t = tY;
-      } else {
+        t = (yval - source.y) / direction.y;
+      } else if (direction.y === 0) {
         p0 = Point(xval, target.y - yw);
         p1 = Point(xval, target.y + yw);
-        t = tX;
+        t = (xval - source.x) / direction.x;
+      } else {
+        tX = (xval - source.x) / direction.x;
+        tY = (yval - source.y) / direction.y;
+        if ((tX < tY || ((-xw < (_ref = source.x - target.x) && _ref < xw))) && !((-yw < (_ref2 = source.y - target.y) && _ref2 < yw))) {
+          p0 = Point(target.x - xw, yval);
+          p1 = Point(target.x + xw, yval);
+          t = tY;
+        } else {
+          p0 = Point(xval, target.y - yw);
+          p1 = Point(xval, target.y + yw);
+          t = tX;
+        }
+      }
+      if (t > 0) {
+        areaPQ0 = direction.cross(p0.subtract(source));
+        areaPQ1 = direction.cross(p1.subtract(source));
+        if (areaPQ0 * areaPQ1 < 0) {
+          return hit = direction.scale(t).add(source);
+        }
       }
     }
-    if (t > 0) {
-      areaPQ0 = direction.cross(p0.subtract(source));
-      areaPQ1 = direction.cross(p1.subtract(source));
-      if (areaPQ0 * areaPQ1 < 0) {
-        return hit = direction.scale(t).add(source);
-      }
-    }
-  }
-};;
+  };
+  return (typeof exports !== "undefined" && exports !== null ? exports : this)["Collision"] = Collision;
+})();;
 var __slice = Array.prototype.slice;
 (function() {
-  var Color, channelize, hslParser, hslToRgb, lookup, names, normalizeKey, parseHSL, parseHex, parseRGB, rgbParser;
+  var Color, channelize, hslParser, hslToRgb, hsvToRgb, lookup, names, normalizeKey, parseHSL, parseHex, parseRGB, rgbParser;
   rgbParser = /^rgba?\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),?\s*(\d?\.?\d*)?\)$/;
   hslParser = /^hsla?\((\d{1,3}),\s*(\d?\.?\d*),\s*(\d?\.?\d*),?\s*(\d?\.?\d*)?\)$/;
   parseRGB = function(colorString) {
@@ -4462,6 +4699,52 @@ var __slice = Array.prototype.slice;
       parsedColor[3] = 1;
     }
     return hslToRgb(parsedColor);
+  };
+  hsvToRgb = function(hsv) {
+    var a, b, f, g, h, i, p, q, r, rgb, s, t, v;
+    r = g = b = null;
+    h = hsv[0], s = hsv[1], v = hsv[2], a = hsv[3];
+    if (a == null) {
+      a = 1;
+    }
+    i = (h / 60).floor();
+    f = h / 60 - i;
+    p = v * (1 - s);
+    q = v * (1 - f * s);
+    t = v * (1 - (1 - f) * s);
+    switch (i % 6) {
+      case 0:
+        r = v;
+        g = t;
+        b = p;
+        break;
+      case 1:
+        r = q;
+        g = v;
+        b = p;
+        break;
+      case 2:
+        r = p;
+        g = v;
+        b = t;
+        break;
+      case 3:
+        r = p;
+        g = q;
+        b = v;
+        break;
+      case 4:
+        r = t;
+        g = p;
+        b = v;
+        break;
+      case 5:
+        r = v;
+        g = p;
+        b = q;
+    }
+    rgb = [(r * 255).round(), (g * 255).round(), (b * 255).round()];
+    return rgb.concat(a);
   };
   hslToRgb = function(hsl) {
     var a, b, channel, g, h, hueToRgb, l, p, q, r, rgbMap, s;
@@ -4974,6 +5257,17 @@ var __slice = Array.prototype.slice;
         return hsl[2];
       }
     },
+    value: function(newVal) {
+      var hsv, _ref;
+      hsv = this.toHsv();
+      if (newVal != null) {
+        hsv[2] = newVal;
+        _ref = hsvToRgb(hsv), this.r = _ref[0], this.g = _ref[1], this.b = _ref[2], this.a = _ref[3];
+        return this;
+      } else {
+        return hsv[2];
+      }
+    },
     /**
     A copy of the calling color with its hue shifted by `degrees`. This differs from the hue setter in that it adds to the existing hue value and will wrap around 0 and 360.
 
@@ -5265,15 +5559,26 @@ var __slice = Array.prototype.slice;
 
     @returns {Color|Number} returns the color object if you pass a new saturation value and returns the saturation otherwise 
     */
-    saturation: function(newVal) {
-      var hsl, _ref;
-      hsl = this.toHsl();
-      if (newVal != null) {
-        hsl[1] = newVal;
-        _ref = hslToRgb(hsl), this.r = _ref[0], this.g = _ref[1], this.b = _ref[2], this.a = _ref[3];
-        return this;
+    saturation: function(newVal, mode) {
+      var hsl, hsv, _ref, _ref2;
+      if (mode === 'hsv') {
+        hsv = this.toHsv();
+        if (newVal != null) {
+          hsv[1] = newVal;
+          _ref = hsvToRgb(hsv), this.r = _ref[0], this.g = _ref[1], this.b = _ref[2], this.a = _ref[3];
+          return this;
+        } else {
+          return hsv[1];
+        }
       } else {
-        return hsl[1];
+        hsl = this.toHsl();
+        if (newVal != null) {
+          hsl[1] = newVal;
+          _ref2 = hslToRgb(hsl), this.r = _ref2[0], this.g = _ref2[1], this.b = _ref2[2], this.a = _ref2[3];
+          return this;
+        } else {
+          return hsl[1];
+        }
       }
     },
     /**
@@ -5365,6 +5670,32 @@ var __slice = Array.prototype.slice;
         hue = (hue * 60).mod(360);
       }
       return [hue, saturation, lightness, this.a];
+    },
+    toHsv: function() {
+      var b, d, g, h, max, min, r, s, v, _ref;
+      r = this.r / 255;
+      g = this.g / 255;
+      b = this.b / 255;
+      _ref = [r, g, b].extremes(), min = _ref.min, max = _ref.max;
+      h = s = v = max;
+      d = max - min;
+      s = (max === 0 ? 0 : d / max);
+      if (max === min) {
+        h = 0;
+      } else {
+        switch (max) {
+          case r:
+            h = (g - b) / d + (g < b ? 6 : 0);
+            break;
+          case g:
+            h = (b - r) / d + 2;
+            break;
+          case b:
+            h = (r - g) / d + 4;
+        }
+        h *= 60;
+      }
+      return [h, s, v];
     },
     /**
     returns string rgba representation of the color. 
@@ -5620,6 +5951,24 @@ player.bind "draw", (canvas) ->
 </pre></code>
 
 @name draw
+@methodOf Drawable#
+@event
+@param {PowerCanvas} canvas A reference to the canvas to draw on.
+*/
+/**
+Triggered before the object should be drawn. A canvas is passed as
+the first argument. This does not apply the current transform.
+
+@name beforeTransform
+@methodOf Drawable#
+@event
+@param {PowerCanvas} canvas A reference to the canvas to draw on.
+*/
+/**
+Triggered after the object should be drawn. A canvas is passed as
+the first argument. This applies the current transform.
+
+@name afterTransform
 @methodOf Drawable#
 @event
 @param {PowerCanvas} canvas A reference to the canvas to draw on.
@@ -6194,6 +6543,29 @@ Emitterable = function(I, self) {
   };
   return (typeof exports !== "undefined" && exports !== null ? exports : this)["Engine"] = Engine;
 })();;
+Engine.Camera = function(I, self) {
+  var currentObject, currentOptions, currentType, followTypes;
+  currentType = "centered";
+  currentOptions = {};
+  currentObject = null;
+  followTypes = {
+    centered: function(object, options) {
+      return Matrix.translation(App.width / 2 - object.I.x, App.height / 2 - object.I.y);
+    }
+  };
+  self.bind("afterUpdate", function() {
+    if (currentObject) {
+      return I.cameraTransform = followTypes[currentType](currentObject, currentOptions);
+    }
+  });
+  return {
+    follow: function(object, type, options) {
+      currentObject = object;
+      currentType = type;
+      return currentOptions = options;
+    }
+  };
+};;
 /**
 The <code>Collision</code> module provides some simple collision detection methods to engine.
 
@@ -6533,6 +6905,26 @@ Object.extend(Engine.Selector, {
     };
   }
 });;
+/**
+The <code>Stats</code> module provides methods to query the engine to find game objects.
+
+@name Stats
+@fieldOf Engine
+@module
+@param {Object} I Instance variables
+@param {Object} self Reference to the engine
+*/Engine.Stats = function(I, self) {
+  return {
+    measure: function(objects, field, frequency) {
+      if (frequency == null) {
+        frequency = 30;
+      }
+    },
+    gatherData: function() {
+      return self.find();
+    }
+  };
+};;
 /**
 The default base class for all objects you can add to the engine.
 
@@ -9263,6 +9655,25 @@ the responsibility of the objects drawing on it to manage that themselves.
   /**
   The <code>Joysticks</code> module gives the engine access to joysticks.
 
+  <code><pre>
+  # First you need to add the joysticks module to the engine
+  window.engine = Engine
+    ...
+    includedModules: ["Joysticks"]
+  # Then you need to get a controller reference
+  # id = 0 for player 1, etc.
+  controller = engine.controller(id)
+
+  # Point indicating direction primary axis is held
+  direction = controller.position()
+
+  # Check if buttons are held
+  controller.actionDown("A")
+  controller.actionDown("B")
+  controller.actionDown("X")
+  controller.actionDown("Y")
+  </pre></code>
+
   @name Joysticks
   @fieldOf Engine
   @module
@@ -9573,6 +9984,9 @@ Base = function(I) {
       I.velocity.y *= frictionFactor;
       I.x += I.velocity.x * dt;
       I.y += I.velocity.y * dt;
+      if (I.rotationalVelocity) {
+        I.rotation += I.rotationalVelocity * dt;
+      }
       I.center.x = I.x;
       I.center.y = I.y;
       return self.trigger("positionUpdated");
@@ -9595,8 +10009,28 @@ Base = function(I) {
       });
     }
   });
-  self.attrReader("mass");
+  self.attrReader("mass", "radius");
   I.center = Point(I.x, I.y);
+  return self;
+};;
+var Blade;
+Blade = function(I) {
+  var self;
+  if (I == null) {
+    I = {};
+  }
+  Object.reverseMerge(I, {
+    damage: 3,
+    duration: 200,
+    includedModules: ["Durable", "Rotatable"],
+    radius: 5,
+    rotation: 0,
+    rotationVelocity: Math.TAU / 128,
+    source: self,
+    speed: 40,
+    sprite: "blade"
+  });
+  self = GameObject(I);
   return self;
 };;
 var Box;
@@ -9606,9 +10040,10 @@ Box = function(I) {
   $.reverseMerge(I, {
     color: "blue",
     health: 20,
-    height: 32,
-    width: 32,
-    radius: 16
+    height: 48,
+    width: 48,
+    radius: 24,
+    sprite: "barrel"
   });
   self = Base(I);
   self.bind("collide", function(other) {
@@ -9625,6 +10060,7 @@ Box = function(I) {
   self.bind("destroy", function() {
     return engine.add({
       "class": "ParticleEffect",
+      duration: 30,
       x: I.x,
       y: I.y
     });
@@ -9645,10 +10081,76 @@ Bullet = function(I) {
     width: 10,
     height: 10
   });
-  I.velocity.scale$(I.speed);
+  I.velocity = I.velocity.scale(I.speed);
   self = Base(I);
   self.bind("collide", function(other) {
     if (other !== I.source && other.I["class"] !== "Bullet") {
+      return self.destroy();
+    }
+  });
+  if (I.particles) {
+    self.bind("destroy", function() {
+      return engine.add({
+        "class": "ParticleEffect",
+        color: "black",
+        particleCount: 5,
+        x: I.x,
+        y: I.y
+      });
+    });
+  }
+  return self;
+};;
+var Explosion;
+Explosion = function(I) {
+  var self;
+  if (I == null) {
+    I = {};
+  }
+  Object.reverseMerge(I, {
+    damage: 20,
+    duration: 4,
+    radius: 30,
+    particleCount: 20,
+    particleDamage: 15,
+    deltaRadius: 10,
+    color: "rgba(255, 0, 0, 0.5)",
+    velocity: Point(0, 0)
+  });
+  self = Base(I);
+  self.bind("update", function() {
+    return I.radius += I.deltaRadius;
+  });
+  Sound.play(["bls_sfx_explosion1_01", "bls_sfx_explosion2_01", "bls_sfx_explosion3_01"].rand());
+  I.particleCount.times(function(n) {
+    var angle;
+    angle = (Math.TAU * (n + 1)) / I.particleCount;
+    return engine.add({
+      "class": "Shot",
+      damage: I.particleDamage,
+      direction: Point.fromAngle(angle + rand() * Math.TAU / 16),
+      source: I.source,
+      start: self.position(),
+      owner: I.owner
+    });
+  });
+  return self;
+};;
+var Flag;
+Flag = function(I) {
+  var self;
+  I || (I = {});
+  $.reverseMerge(I, {
+    height: 40,
+    sprite: "flag",
+    width: 20
+  });
+  self = Base(I);
+  self.bind("collide", function(other) {
+    if (other.I.source !== self && other.I["class"] === "Player") {
+      other.pickUpFlag();
+    }
+    if (other.I["class"] !== "Bullet") {
       return self.destroy();
     }
   });
@@ -9664,7 +10166,7 @@ HealthMeter = function(I, self) {
   self.bind("draw", function(canvas) {
     var height, maxWidth, padding, ratio, start;
     ratio = I.health / I.maxHealth;
-    start = Point(0, 0);
+    start = Point(-4, -6);
     padding = 1;
     maxWidth = 40;
     height = 5;
@@ -9691,15 +10193,1470 @@ HealthMeter = function(I, self) {
   });
   return {};
 };;
+var HomingMissile;
+HomingMissile = function(I) {
+  var self;
+  if (I == null) {
+    I = {};
+  }
+  Object.reverseMerge(I, {
+    damage: 0,
+    duration: 90,
+    height: 24,
+    includedModules: ["Rotatable"],
+    sprite: "homing_missile",
+    radius: 12,
+    width: 24,
+    velocity: Point(0, 0)
+  });
+  self = Base(I);
+  self.bind("collide", function(other) {
+    if (other !== I.source && I.active) {
+      return self.destroy();
+    }
+  });
+  self.bind("destroy", function(other) {
+    return engine.add({
+      "class": "Explosion",
+      damage: 1,
+      deltaRadius: 3,
+      particleCount: 2,
+      particleDamage: 2,
+      radius: 10,
+      x: I.x,
+      y: I.y
+    });
+  });
+  self.bind("wallCollide", function() {
+    return self.destroy();
+  });
+  self.bind("update", function() {
+    var direction, player, players, target, targetPosition, targets;
+    if (I.age >= I.duration && I.active) {
+      self.destroy();
+      return;
+    }
+    players = engine.find("Player");
+    targets = [];
+    players.each(function(player) {
+      var distanceSquared;
+      if (player !== I.source) {
+        distanceSquared = Point.distanceSquared(I, player.position());
+        return targets.push({
+          distance: distanceSquared,
+          player: player
+        });
+      }
+    });
+    targets.sort(function(a, b) {
+      return a.distance - b.distance;
+    });
+    if (target = targets.first()) {
+      player = target.player;
+      targetPosition = player.position().subtract(I);
+      direction = Math.atan2(targetPosition.y, targetPosition.x);
+      I.rotation = direction;
+      if (direction) {
+        return I.velocity = Point((I.velocity.x * 0.95) + Math.cos(direction), (I.velocity.y * 0.95) + Math.sin(direction));
+      }
+    }
+  });
+  Sound.play("bls_sfx_rocketlaunch_01");
+  return self;
+};;
+var Level;
+Level = {
+  load: function(data) {
+    var spawnPoints, walls;
+    walls = data.walls, spawnPoints = data.spawnPoints;
+    walls.each(function(_arg) {
+      var end, start;
+      start = _arg[0], end = _arg[1];
+      return engine.add({
+        "class": "Wall",
+        start: Point(start.x, start.y),
+        end: Point(end.x, end.y)
+      });
+    });
+    return window.spawnPoints = spawnPoints.map(function(_arg) {
+      var x, y;
+      x = _arg.x, y = _arg.y;
+      return Point(x, y);
+    });
+  },
+  data: [
+    {
+      "spawnPoints": [
+        {
+          "x": 304,
+          "y": 460
+        }, {
+          "x": 677,
+          "y": 340
+        }, {
+          "x": 654,
+          "y": 49
+        }, {
+          "x": 489,
+          "y": 212
+        }, {
+          "x": 40,
+          "y": 302
+        }, {
+          "x": 693,
+          "y": 556
+        }
+      ],
+      "walls": [
+        [
+          {
+            "x": 157,
+            "y": 494
+          }, {
+            "x": 121,
+            "y": 455
+          }
+        ], [
+          {
+            "x": 121,
+            "y": 455
+          }, {
+            "x": 121,
+            "y": 336
+          }
+        ], [
+          {
+            "x": 121,
+            "y": 336
+          }, {
+            "x": 162,
+            "y": 289
+          }
+        ], [
+          {
+            "x": 162,
+            "y": 289
+          }, {
+            "x": 364,
+            "y": 288
+          }
+        ], [
+          {
+            "x": 364,
+            "y": 288
+          }, {
+            "x": 396,
+            "y": 317
+          }
+        ], [
+          {
+            "x": 396,
+            "y": 317
+          }, {
+            "x": 395,
+            "y": 437
+          }
+        ], [
+          {
+            "x": 395,
+            "y": 437
+          }, {
+            "x": 376,
+            "y": 482
+          }
+        ], [
+          {
+            "x": 376,
+            "y": 482
+          }, {
+            "x": 338,
+            "y": 467
+          }
+        ], [
+          {
+            "x": 338,
+            "y": 467
+          }, {
+            "x": 342,
+            "y": 430
+          }
+        ], [
+          {
+            "x": 342,
+            "y": 430
+          }, {
+            "x": 360,
+            "y": 393
+          }
+        ], [
+          {
+            "x": 360,
+            "y": 393
+          }, {
+            "x": 363,
+            "y": 335
+          }
+        ], [
+          {
+            "x": 363,
+            "y": 335
+          }, {
+            "x": 329,
+            "y": 316
+          }
+        ], [
+          {
+            "x": 329,
+            "y": 316
+          }, {
+            "x": 191,
+            "y": 317
+          }
+        ], [
+          {
+            "x": 191,
+            "y": 317
+          }, {
+            "x": 147,
+            "y": 346
+          }
+        ], [
+          {
+            "x": 147,
+            "y": 346
+          }, {
+            "x": 155,
+            "y": 433
+          }
+        ], [
+          {
+            "x": 155,
+            "y": 433
+          }, {
+            "x": 173,
+            "y": 456
+          }
+        ], [
+          {
+            "x": 173,
+            "y": 456
+          }, {
+            "x": 175,
+            "y": 478
+          }
+        ], [
+          {
+            "x": 175,
+            "y": 478
+          }, {
+            "x": 157,
+            "y": 495
+          }
+        ], [
+          {
+            "x": 691,
+            "y": 472
+          }, {
+            "x": 592,
+            "y": 494
+          }
+        ], [
+          {
+            "x": 592,
+            "y": 494
+          }, {
+            "x": 558,
+            "y": 477
+          }
+        ], [
+          {
+            "x": 558,
+            "y": 477
+          }, {
+            "x": 573,
+            "y": 104
+          }
+        ], [
+          {
+            "x": 573,
+            "y": 104
+          }, {
+            "x": 595,
+            "y": 77
+          }
+        ], [
+          {
+            "x": 595,
+            "y": 77
+          }, {
+            "x": 635,
+            "y": 112
+          }
+        ], [
+          {
+            "x": 635,
+            "y": 112
+          }, {
+            "x": 610,
+            "y": 412
+          }
+        ], [
+          {
+            "x": 610,
+            "y": 412
+          }, {
+            "x": 621,
+            "y": 430
+          }
+        ], [
+          {
+            "x": 621,
+            "y": 430
+          }, {
+            "x": 641,
+            "y": 436
+          }
+        ], [
+          {
+            "x": 641,
+            "y": 436
+          }, {
+            "x": 707,
+            "y": 430
+          }
+        ], [
+          {
+            "x": 707,
+            "y": 430
+          }, {
+            "x": 746,
+            "y": 443
+          }
+        ], [
+          {
+            "x": 746,
+            "y": 443
+          }, {
+            "x": 751,
+            "y": 471
+          }
+        ], [
+          {
+            "x": 751,
+            "y": 471
+          }, {
+            "x": 725,
+            "y": 484
+          }
+        ], [
+          {
+            "x": 725,
+            "y": 484
+          }, {
+            "x": 690,
+            "y": 474
+          }
+        ], [
+          {
+            "x": 690,
+            "y": 474
+          }, {
+            "x": 686,
+            "y": 473
+          }
+        ]
+      ]
+    }, {
+      "spawnPoints": [
+        {
+          "x": 50,
+          "y": 556
+        }, {
+          "x": 231,
+          "y": 346
+        }, {
+          "x": 184,
+          "y": 237
+        }, {
+          "x": 232,
+          "y": 138
+        }, {
+          "x": 673,
+          "y": 370
+        }, {
+          "x": 415,
+          "y": 343
+        }
+      ],
+      "walls": [
+        [
+          {
+            "x": 118,
+            "y": 51
+          }, {
+            "x": 87,
+            "y": 82
+          }
+        ], [
+          {
+            "x": 87,
+            "y": 82
+          }, {
+            "x": 93,
+            "y": 158
+          }
+        ], [
+          {
+            "x": 93,
+            "y": 158
+          }, {
+            "x": 112,
+            "y": 197
+          }
+        ], [
+          {
+            "x": 112,
+            "y": 197
+          }, {
+            "x": 535,
+            "y": 203
+          }
+        ], [
+          {
+            "x": 535,
+            "y": 203
+          }, {
+            "x": 548,
+            "y": 178
+          }
+        ], [
+          {
+            "x": 548,
+            "y": 178
+          }, {
+            "x": 516,
+            "y": 148
+          }
+        ], [
+          {
+            "x": 516,
+            "y": 148
+          }, {
+            "x": 148,
+            "y": 169
+          }
+        ], [
+          {
+            "x": 148,
+            "y": 169
+          }, {
+            "x": 121,
+            "y": 154
+          }
+        ], [
+          {
+            "x": 121,
+            "y": 154
+          }, {
+            "x": 116,
+            "y": 131
+          }
+        ], [
+          {
+            "x": 116,
+            "y": 131
+          }, {
+            "x": 169,
+            "y": 47
+          }
+        ], [
+          {
+            "x": 169,
+            "y": 47
+          }, {
+            "x": 145,
+            "y": 41
+          }
+        ], [
+          {
+            "x": 145,
+            "y": 41
+          }, {
+            "x": 116,
+            "y": 52
+          }
+        ], [
+          {
+            "x": 116,
+            "y": 52
+          }, {
+            "x": 115,
+            "y": 54
+          }
+        ], [
+          {
+            "x": 273,
+            "y": 406
+          }, {
+            "x": 299,
+            "y": 379
+          }
+        ], [
+          {
+            "x": 299,
+            "y": 379
+          }, {
+            "x": 305,
+            "y": 277
+          }
+        ], [
+          {
+            "x": 305,
+            "y": 277
+          }, {
+            "x": 291,
+            "y": 261
+          }
+        ], [
+          {
+            "x": 291,
+            "y": 261
+          }, {
+            "x": 86,
+            "y": 270
+          }
+        ], [
+          {
+            "x": 86,
+            "y": 270
+          }, {
+            "x": 70,
+            "y": 300
+          }
+        ], [
+          {
+            "x": 70,
+            "y": 300
+          }, {
+            "x": 89,
+            "y": 527
+          }
+        ], [
+          {
+            "x": 89,
+            "y": 527
+          }, {
+            "x": 104,
+            "y": 539
+          }
+        ], [
+          {
+            "x": 104,
+            "y": 539
+          }, {
+            "x": 144,
+            "y": 525
+          }
+        ], [
+          {
+            "x": 144,
+            "y": 525
+          }, {
+            "x": 146,
+            "y": 507
+          }
+        ], [
+          {
+            "x": 146,
+            "y": 507
+          }, {
+            "x": 106,
+            "y": 463
+          }
+        ], [
+          {
+            "x": 106,
+            "y": 463
+          }, {
+            "x": 89,
+            "y": 315
+          }
+        ], [
+          {
+            "x": 89,
+            "y": 315
+          }, {
+            "x": 110,
+            "y": 291
+          }
+        ], [
+          {
+            "x": 110,
+            "y": 291
+          }, {
+            "x": 258,
+            "y": 288
+          }
+        ], [
+          {
+            "x": 258,
+            "y": 288
+          }, {
+            "x": 270,
+            "y": 304
+          }
+        ], [
+          {
+            "x": 270,
+            "y": 304
+          }, {
+            "x": 273,
+            "y": 362
+          }
+        ], [
+          {
+            "x": 273,
+            "y": 362
+          }, {
+            "x": 255,
+            "y": 389
+          }
+        ], [
+          {
+            "x": 255,
+            "y": 389
+          }, {
+            "x": 257,
+            "y": 406
+          }
+        ], [
+          {
+            "x": 257,
+            "y": 406
+          }, {
+            "x": 273,
+            "y": 407
+          }
+        ], [
+          {
+            "x": 273,
+            "y": 407
+          }, {
+            "x": 275,
+            "y": 403
+          }
+        ], [
+          {
+            "x": 716,
+            "y": 294
+          }, {
+            "x": 688,
+            "y": 274
+          }
+        ], [
+          {
+            "x": 688,
+            "y": 274
+          }, {
+            "x": 547,
+            "y": 288
+          }
+        ], [
+          {
+            "x": 547,
+            "y": 288
+          }, {
+            "x": 529,
+            "y": 419
+          }
+        ], [
+          {
+            "x": 529,
+            "y": 419
+          }, {
+            "x": 545,
+            "y": 448
+          }
+        ], [
+          {
+            "x": 545,
+            "y": 448
+          }, {
+            "x": 584,
+            "y": 437
+          }
+        ], [
+          {
+            "x": 584,
+            "y": 437
+          }, {
+            "x": 581,
+            "y": 398
+          }
+        ], [
+          {
+            "x": 581,
+            "y": 398
+          }, {
+            "x": 600,
+            "y": 327
+          }
+        ], [
+          {
+            "x": 600,
+            "y": 327
+          }, {
+            "x": 721,
+            "y": 317
+          }
+        ], [
+          {
+            "x": 721,
+            "y": 317
+          }, {
+            "x": 716,
+            "y": 296
+          }
+        ], [
+          {
+            "x": 716,
+            "y": 296
+          }, {
+            "x": 712,
+            "y": 291
+          }
+        ], [
+          {
+            "x": 417,
+            "y": 566
+          }, {
+            "x": 429,
+            "y": 551
+          }
+        ], [
+          {
+            "x": 429,
+            "y": 551
+          }, {
+            "x": 432,
+            "y": 484
+          }
+        ], [
+          {
+            "x": 432,
+            "y": 484
+          }, {
+            "x": 492,
+            "y": 473
+          }
+        ], [
+          {
+            "x": 492,
+            "y": 473
+          }, {
+            "x": 492,
+            "y": 459
+          }
+        ], [
+          {
+            "x": 492,
+            "y": 459
+          }, {
+            "x": 342,
+            "y": 447
+          }
+        ], [
+          {
+            "x": 342,
+            "y": 447
+          }, {
+            "x": 334,
+            "y": 460
+          }
+        ], [
+          {
+            "x": 334,
+            "y": 460
+          }, {
+            "x": 395,
+            "y": 488
+          }
+        ], [
+          {
+            "x": 395,
+            "y": 488
+          }, {
+            "x": 389,
+            "y": 557
+          }
+        ], [
+          {
+            "x": 389,
+            "y": 557
+          }, {
+            "x": 417,
+            "y": 567
+          }
+        ]
+      ]
+    }, {
+      "spawnPoints": [
+        {
+          "x": 65,
+          "y": 345
+        }, {
+          "x": 480,
+          "y": 207
+        }, {
+          "x": 637,
+          "y": 134
+        }, {
+          "x": 765,
+          "y": 222
+        }, {
+          "x": 229,
+          "y": 363
+        }, {
+          "x": 546,
+          "y": 567
+        }
+      ],
+      "walls": [
+        [
+          {
+            "x": 107,
+            "y": 506
+          }, {
+            "x": 147,
+            "y": 474
+          }
+        ], [
+          {
+            "x": 147,
+            "y": 474
+          }, {
+            "x": 620,
+            "y": 456
+          }
+        ], [
+          {
+            "x": 620,
+            "y": 456
+          }, {
+            "x": 650,
+            "y": 489
+          }
+        ], [
+          {
+            "x": 650,
+            "y": 489
+          }, {
+            "x": 634,
+            "y": 534
+          }
+        ], [
+          {
+            "x": 634,
+            "y": 534
+          }, {
+            "x": 144,
+            "y": 540
+          }
+        ], [
+          {
+            "x": 144,
+            "y": 540
+          }, {
+            "x": 107,
+            "y": 506
+          }
+        ], [
+          {
+            "x": 107,
+            "y": 506
+          }, {
+            "x": 109,
+            "y": 505
+          }
+        ], [
+          {
+            "x": 725,
+            "y": 419
+          }, {
+            "x": 693,
+            "y": 388
+          }
+        ], [
+          {
+            "x": 693,
+            "y": 388
+          }, {
+            "x": 682,
+            "y": 53
+          }
+        ], [
+          {
+            "x": 682,
+            "y": 53
+          }, {
+            "x": 695,
+            "y": 42
+          }
+        ], [
+          {
+            "x": 695,
+            "y": 42
+          }, {
+            "x": 707,
+            "y": 54
+          }
+        ], [
+          {
+            "x": 707,
+            "y": 54
+          }, {
+            "x": 742,
+            "y": 397
+          }
+        ], [
+          {
+            "x": 742,
+            "y": 397
+          }, {
+            "x": 724,
+            "y": 418
+          }
+        ], [
+          {
+            "x": 724,
+            "y": 418
+          }, {
+            "x": 720,
+            "y": 415
+          }
+        ], [
+          {
+            "x": 567,
+            "y": 83
+          }, {
+            "x": 553,
+            "y": 104
+          }
+        ], [
+          {
+            "x": 553,
+            "y": 104
+          }, {
+            "x": 542,
+            "y": 259
+          }
+        ], [
+          {
+            "x": 542,
+            "y": 259
+          }, {
+            "x": 529,
+            "y": 285
+          }
+        ], [
+          {
+            "x": 529,
+            "y": 285
+          }, {
+            "x": 166,
+            "y": 293
+          }
+        ], [
+          {
+            "x": 166,
+            "y": 293
+          }, {
+            "x": 134,
+            "y": 320
+          }
+        ], [
+          {
+            "x": 134,
+            "y": 320
+          }, {
+            "x": 126,
+            "y": 409
+          }
+        ], [
+          {
+            "x": 126,
+            "y": 409
+          }, {
+            "x": 132,
+            "y": 420
+          }
+        ], [
+          {
+            "x": 132,
+            "y": 420
+          }, {
+            "x": 150,
+            "y": 409
+          }
+        ], [
+          {
+            "x": 150,
+            "y": 409
+          }, {
+            "x": 161,
+            "y": 329
+          }
+        ], [
+          {
+            "x": 161,
+            "y": 329
+          }, {
+            "x": 198,
+            "y": 316
+          }
+        ], [
+          {
+            "x": 198,
+            "y": 316
+          }, {
+            "x": 555,
+            "y": 310
+          }
+        ], [
+          {
+            "x": 555,
+            "y": 310
+          }, {
+            "x": 567,
+            "y": 297
+          }
+        ], [
+          {
+            "x": 567,
+            "y": 297
+          }, {
+            "x": 585,
+            "y": 109
+          }
+        ], [
+          {
+            "x": 585,
+            "y": 109
+          }, {
+            "x": 577,
+            "y": 74
+          }
+        ], [
+          {
+            "x": 577,
+            "y": 74
+          }, {
+            "x": 565,
+            "y": 85
+          }
+        ], [
+          {
+            "x": 565,
+            "y": 85
+          }, {
+            "x": 566,
+            "y": 89
+          }
+        ]
+      ]
+    }, {
+      "spawnPoints": [
+        {
+          "x": 461,
+          "y": 448
+        }, {
+          "x": 634,
+          "y": 182
+        }, {
+          "x": 236,
+          "y": 135
+        }, {
+          "x": 257,
+          "y": 445
+        }, {
+          "x": 615,
+          "y": 403
+        }, {
+          "x": 47,
+          "y": 470
+        }
+      ],
+      "walls": [
+        [
+          {
+            "x": 394,
+            "y": 131
+          }, {
+            "x": 345,
+            "y": 132
+          }
+        ], [
+          {
+            "x": 345,
+            "y": 132
+          }, {
+            "x": 190,
+            "y": 260
+          }
+        ], [
+          {
+            "x": 190,
+            "y": 260
+          }, {
+            "x": 200,
+            "y": 301
+          }
+        ], [
+          {
+            "x": 200,
+            "y": 301
+          }, {
+            "x": 436,
+            "y": 492
+          }
+        ], [
+          {
+            "x": 436,
+            "y": 492
+          }, {
+            "x": 492,
+            "y": 500
+          }
+        ], [
+          {
+            "x": 492,
+            "y": 500
+          }, {
+            "x": 519,
+            "y": 479
+          }
+        ], [
+          {
+            "x": 519,
+            "y": 479
+          }, {
+            "x": 511,
+            "y": 428
+          }
+        ], [
+          {
+            "x": 511,
+            "y": 428
+          }, {
+            "x": 511,
+            "y": 428
+          }
+        ], [
+          {
+            "x": 511,
+            "y": 428
+          }, {
+            "x": 480,
+            "y": 382
+          }
+        ], [
+          {
+            "x": 480,
+            "y": 382
+          }, {
+            "x": 488,
+            "y": 339
+          }
+        ], [
+          {
+            "x": 488,
+            "y": 339
+          }, {
+            "x": 622,
+            "y": 212
+          }
+        ], [
+          {
+            "x": 622,
+            "y": 212
+          }, {
+            "x": 653,
+            "y": 221
+          }
+        ], [
+          {
+            "x": 653,
+            "y": 221
+          }, {
+            "x": 673,
+            "y": 242
+          }
+        ], [
+          {
+            "x": 673,
+            "y": 242
+          }, {
+            "x": 549,
+            "y": 394
+          }
+        ], [
+          {
+            "x": 549,
+            "y": 394
+          }, {
+            "x": 568,
+            "y": 473
+          }
+        ], [
+          {
+            "x": 568,
+            "y": 473
+          }, {
+            "x": 540,
+            "y": 523
+          }
+        ], [
+          {
+            "x": 540,
+            "y": 523
+          }, {
+            "x": 467,
+            "y": 537
+          }
+        ], [
+          {
+            "x": 467,
+            "y": 537
+          }, {
+            "x": 391,
+            "y": 511
+          }
+        ], [
+          {
+            "x": 391,
+            "y": 511
+          }, {
+            "x": 195,
+            "y": 339
+          }
+        ], [
+          {
+            "x": 195,
+            "y": 339
+          }, {
+            "x": 169,
+            "y": 298
+          }
+        ], [
+          {
+            "x": 169,
+            "y": 298
+          }, {
+            "x": 163,
+            "y": 245
+          }
+        ], [
+          {
+            "x": 163,
+            "y": 245
+          }, {
+            "x": 312,
+            "y": 116
+          }
+        ], [
+          {
+            "x": 312,
+            "y": 116
+          }, {
+            "x": 360,
+            "y": 101
+          }
+        ], [
+          {
+            "x": 360,
+            "y": 101
+          }, {
+            "x": 405,
+            "y": 109
+          }
+        ], [
+          {
+            "x": 405,
+            "y": 109
+          }, {
+            "x": 404,
+            "y": 123
+          }
+        ], [
+          {
+            "x": 404,
+            "y": 123
+          }, {
+            "x": 393,
+            "y": 131
+          }
+        ], [
+          {
+            "x": 123,
+            "y": 493
+          }, {
+            "x": 141,
+            "y": 464
+          }
+        ], [
+          {
+            "x": 141,
+            "y": 464
+          }, {
+            "x": 69,
+            "y": 183
+          }
+        ], [
+          {
+            "x": 69,
+            "y": 183
+          }, {
+            "x": 49,
+            "y": 160
+          }
+        ], [
+          {
+            "x": 49,
+            "y": 160
+          }, {
+            "x": 29,
+            "y": 192
+          }
+        ], [
+          {
+            "x": 29,
+            "y": 192
+          }, {
+            "x": 99,
+            "y": 472
+          }
+        ], [
+          {
+            "x": 99,
+            "y": 472
+          }, {
+            "x": 123,
+            "y": 492
+          }
+        ], [
+          {
+            "x": 247,
+            "y": 503
+          }, {
+            "x": 220,
+            "y": 518
+          }
+        ], [
+          {
+            "x": 220,
+            "y": 518
+          }, {
+            "x": 214,
+            "y": 539
+          }
+        ], [
+          {
+            "x": 214,
+            "y": 539
+          }, {
+            "x": 234,
+            "y": 566
+          }
+        ], [
+          {
+            "x": 234,
+            "y": 566
+          }, {
+            "x": 279,
+            "y": 562
+          }
+        ], [
+          {
+            "x": 279,
+            "y": 562
+          }, {
+            "x": 309,
+            "y": 538
+          }
+        ], [
+          {
+            "x": 309,
+            "y": 538
+          }, {
+            "x": 287,
+            "y": 498
+          }
+        ], [
+          {
+            "x": 287,
+            "y": 498
+          }, {
+            "x": 254,
+            "y": 489
+          }
+        ], [
+          {
+            "x": 254,
+            "y": 489
+          }, {
+            "x": 245,
+            "y": 504
+          }
+        ], [
+          {
+            "x": 245,
+            "y": 504
+          }, {
+            "x": 249,
+            "y": 503
+          }
+        ]
+      ]
+    }
+  ]
+};;
+var Mine;
+Mine = function(I) {
+  var self;
+  if (I == null) {
+    I = {};
+  }
+  Object.reverseMerge(I, {
+    countdown: 60,
+    sprite: "mine"
+  });
+  self = Base(I);
+  self.bind("update", function() {
+    I.countdown = I.countdown.approach(0, 1);
+    if (I.countdown === 0) {
+      return self.destroy();
+    }
+  });
+  self.bind('destroy', function() {
+    engine.I.cooldowns.shake = 7;
+    return engine.add({
+      "class": "Explosion",
+      owner: I.owner,
+      x: I.x,
+      y: I.y
+    });
+  });
+  return self;
+};;
 var ParticleEffect;
 ParticleEffect = function(I) {
   var self;
   I || (I = {});
   $.reverseMerge(I, {
     batchSize: 5,
-    color: "blue",
+    color: "#502A2A",
     duration: 50,
-    particleCount: 5,
+    particleCount: 10,
     particleSizes: [8, 6, 8, 4, 6],
     height: 32,
     sprite: Sprite.EMPTY,
@@ -9725,11 +11682,7 @@ ParticleEffect = function(I) {
 };;
 var Physics;
 Physics = function() {
-  var WALL_BOTTOM, WALL_LEFT, WALL_RIGHT, WALL_TOP, overlapX, overlapY, rectangularOverlap, resolveCollisions, walls;
-  WALL_LEFT = 0;
-  WALL_RIGHT = App.width;
-  WALL_TOP = App.height;
-  WALL_BOTTOM = 0;
+  var overlapX, overlapY, rectangularOverlap, resolveCollisions, resolveWallCollisions;
   overlapX = function(wall, circle) {
     return (circle.x - wall.center.x).abs() < wall.halfWidth + circle.radius;
   };
@@ -9739,21 +11692,6 @@ Physics = function() {
   rectangularOverlap = function(wall, circle) {
     return overlapX(wall, circle) && overlapY(wall, circle);
   };
-  walls = [
-    {
-      normal: Point(1, 0),
-      position: WALL_LEFT
-    }, {
-      normal: Point(-1, 0),
-      position: -WALL_RIGHT
-    }, {
-      normal: Point(0, 1),
-      position: WALL_TOP
-    }, {
-      normal: Point(0, -1),
-      position: -WALL_BOTTOM
-    }
-  ];
   resolveCollisions = function(objects, dt) {
     objects.eachPair(function(a, b) {
       if (!(a.collides() && b.collides())) {
@@ -9764,52 +11702,58 @@ Physics = function() {
         return b.trigger("collide", a);
       }
     });
-    return;
+  };
+  resolveWallCollisions = function(objects, walls, dt) {
     return objects.each(function(object) {
-      var center, collided, radius, velocity, _ref;
-      if (!object.collidesWithWalls()) {
-        return;
-      }
-      center = object.center();
-      _ref = object.I, radius = _ref.radius, velocity = _ref.velocity;
+      var collided, velocity;
+      velocity = object.I.velocity;
       collided = false;
       walls.each(function(wall) {
-        var normal, position, velocityProjection;
-        position = wall.position, normal = wall.normal;
-        if (center.dot(normal) < radius + position) {
+        var normal, velocityProjection;
+        if (normal = wall.collides(object.I)) {
           velocityProjection = velocity.dot(normal);
           if (velocityProjection < 0) {
-            velocity = velocity.subtract(normal.scale(2 * velocityProjection));
-            return collided = true;
+            collided = true;
+            return velocity = velocity.subtract(normal.scale(2 * velocityProjection));
           }
         }
       });
       if (collided) {
         object.I.velocity = velocity;
-        object.updatePosition(dt, true);
-        object.trigger("wallCollision");
+        object.updatePosition(dt);
+        return object.trigger("wallCollide");
       }
     });
   };
   return {
-    process: function(objects) {
-      var dt, steps;
+    process: function(objects, walls) {
+      var dt, missiles, player1, players, steps;
+      players = objects.select(function(object) {
+        return object.I["class"] === "Player";
+      });
+      missiles = objects.select(function(object) {
+        return object.I["class"] === "HomingMissile";
+      });
       steps = 4;
       dt = 1 / steps;
-      return steps.times(function() {
+      steps.times(function() {
         objects.invoke("updatePosition", dt);
-        return resolveCollisions(objects, dt);
+        resolveCollisions(objects, dt);
+        return resolveWallCollisions(players.concat(missiles), walls, dt);
       });
+      if (player1 = engine.find("Player.team=0").first()) {
+        return engine.find("Wall").invoke("collides", player1.I);
+      }
     }
   };
 };;
 var Player;
 var __slice = Array.prototype.slice;
 Player = function(I) {
-  var SPRITES_WIDE, actionDown, actionPressed, activeWeapon, animationStep, controller, self, standingOffset, weapons;
+  var SPRITES_WIDE, actionDown, actionPressed, activeWeapon, animationStep, controller, self, spawnPoint, sprites, standingOffset, _ref;
   I || (I = {});
-  activeWeapon = 0;
-  SPRITES_WIDE = 16;
+  activeWeapon = "machineGun";
+  SPRITES_WIDE = 3;
   animationStep = 0;
   standingOffset = Point(0, -16);
   Object.reverseMerge(I, {
@@ -9817,6 +11761,8 @@ Player = function(I) {
     cooldowns: {
       shoot: 0
     },
+    crosshairPosition: Point(0, 0),
+    hasFlag: false,
     health: 100,
     heading: 0,
     height: 32,
@@ -9828,7 +11774,16 @@ Player = function(I) {
     speed: 7,
     velocity: Point(0, 0)
   });
+  sprites = window.playerSprites[I.team];
   controller = Joysticks.getController(I.team);
+  spawnPoint = (_ref = window.spawnPoints) != null ? _ref[I.id] : void 0;
+  if (I.randRespawn) {
+    spawnPoint = window.spawnPoints.rand();
+  }
+  if (spawnPoint) {
+    I.x = spawnPoint.x;
+    I.y = spawnPoint.y;
+  }
   actionDown = function() {
     var actions;
     actions = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
@@ -9847,115 +11802,113 @@ Player = function(I) {
       return isDown || justPressed[action];
     });
   };
-  self = Base(I);
+  self = Base(I).extend({
+    pickUpFlag: function() {
+      return I.hasFlag = true;
+    }
+  });
   self.include(HealthMeter);
   self.bind("update", function() {
-    var cycle, facingOffset, key, movement, shootVelocity, spriteIndex, teamColor, value, _ref, _ref2, _ref3, _ref4;
-    _ref = I.cooldowns;
-    for (key in _ref) {
-      value = _ref[key];
+    var cycle, facingOffset, key, movement, spriteIndex, value, weapon, _ref2, _ref3, _ref4, _ref5;
+    if (I.hasFlag) {
+      window.playerScores[I.team] += 1;
+    }
+    _ref2 = I.cooldowns;
+    for (key in _ref2) {
+      value = _ref2[key];
       I.cooldowns[key] = value.approach(0, 1);
     }
     if (controller.actionDown("A")) {
-      activeWeapon = 0;
+      activeWeapon = "machineGun";
     }
     if (controller.actionDown("X")) {
-      activeWeapon = 1;
+      activeWeapon = "shotgun";
     }
     if (controller.actionDown("B")) {
-      activeWeapon = 2;
+      activeWeapon = "homingMissile";
+    }
+    if (controller.actionDown("Y")) {
+      activeWeapon = "mine";
     }
     I.hflip = I.heading > 2 * Math.TAU / 8 || I.heading < -2 * Math.TAU / 8;
-    cycle = (I.age / 4).floor() % 2;
-    if ((-Math.TAU / 8 <= (_ref2 = I.heading) && _ref2 <= Math.TAU / 8)) {
-      facingOffset = 0;
-    } else if ((-3 * Math.TAU / 8 <= (_ref3 = I.heading) && _ref3 <= -Math.TAU / 8)) {
-      facingOffset = 4;
-    } else if ((Math.TAU / 8 < (_ref4 = I.heading) && _ref4 <= 3 * Math.TAU / 8)) {
+    cycle = (I.age / 3).floor() % 8;
+    if ((-Math.TAU / 8 <= (_ref3 = I.heading) && _ref3 <= Math.TAU / 8)) {
+      facingOffset = 1;
+    } else if ((-3 * Math.TAU / 8 <= (_ref4 = I.heading) && _ref4 <= -Math.TAU / 8)) {
       facingOffset = 2;
-    } else {
+    } else if ((Math.TAU / 8 < (_ref5 = I.heading) && _ref5 <= 3 * Math.TAU / 8)) {
       facingOffset = 0;
+    } else {
+      facingOffset = 1;
     }
-    teamColor = I.team * SPRITES_WIDE;
-    spriteIndex = cycle + facingOffset + teamColor;
+    if (I.velocity.equal(Point(0, 0))) {
+      cycle = 0;
+    } else {
+      cycle += 1;
+    }
+    spriteIndex = cycle * SPRITES_WIDE + facingOffset;
     I.spriteOffset = standingOffset;
     I.sprite = sprites[spriteIndex];
     movement = controller.position();
-    shootVelocity = controller.position(1);
     movement = movement.norm();
     I.velocity = movement.scale(I.speed);
+    I.crosshairPosition = controller.position(1).norm().scale(75);
     if (I.velocity.magnitude() !== 0) {
       I.heading = Point.direction(Point(0, 0), I.velocity);
     }
-    if (shootVelocity.magnitude() > 0.5) {
-      return weapons.wrap(activeWeapon)(shootVelocity.norm());
+    if (I.cooldowns.shoot === 0) {
+      if (controller.axis(5) > 16000 || controller.axis(4) > 16000) {
+        if (weapon = Weapon.Weapons[activeWeapon]) {
+          return I.cooldowns.shoot += weapon.fire(self, I.crosshairPosition.norm());
+        }
+      }
     }
   });
-  weapons = [
-    function(direction) {
-      if (I.cooldowns.shoot === 0) {
-        I.cooldowns.shoot = 5;
-        Sound.play("pew");
-        return engine.add({
-          "class": "Bullet",
-          damage: 11,
-          source: self,
-          velocity: Point(direction.x, direction.y),
-          x: I.x,
-          y: I.y
-        });
-      }
-    }, function(direction) {
-      if (I.cooldowns.shoot === 0) {
-        I.cooldowns.shoot = 10;
-        Sound.play("shotgun");
-        return (10 + rand(5)).times(function() {
-          var angle;
-          angle = Math.atan2(direction.y, direction.x);
-          angle += rand() * (Math.TAU / 24) - (Math.TAU / 48);
-          return engine.add({
-            "class": "Bullet",
-            damage: 3,
-            radius: 3,
-            speed: 10,
-            source: self,
-            velocity: Point.fromAngle(angle),
-            x: I.x + rand(15) * I.x.sign(),
-            y: I.y + rand(15) * I.y.sign()
-          });
-        });
-      }
-    }, function(direction) {
-      if (I.cooldowns.shoot === 0) {
-        I.cooldowns.shoot = 20;
-        Sound.play("boom");
-        engine.I.cooldowns.shake = 10;
-        return engine.add({
-          "class": "Bullet",
-          damage: 34,
-          radius: 7,
-          velocity: Point(direction.x, direction.y),
-          speed: 7,
-          source: self,
-          x: I.x,
-          y: I.y
-        });
-      }
-    }
-  ];
   self.bind("collide", function(other) {
-    var damage;
+    var damage, owner;
     if (other.I.source !== self && other.I.active) {
       if (damage = other.I.damage) {
         I.health -= damage;
-        if (I.health <= 0) {
+        if (I.health <= 0 && I.active) {
+          owner = other.I.owner;
+          if (owner === self) {
+            window.playerScores[I.team] -= 1;
+          } else {
+            window.playerScores[owner != null ? owner.I.team : void 0] += 1;
+          }
           return self.destroy();
         }
       }
     }
   });
+  self.bind("drawDebug", function(canvas) {
+    return canvas.drawLine({
+      start: I,
+      end: I.velocity.scale(10).add(I),
+      color: "yellow",
+      width: 2
+    });
+  });
+  self.bind("beforeTransform", function(canvas) {
+    if (controller.position(1).magnitude() > 0) {
+      return canvas.drawCircle({
+        x: I.x + I.crosshairPosition.x,
+        y: I.y + I.crosshairPosition.y,
+        radius: 10,
+        color: 'rgba(0, 150, 0, 0.5)'
+      });
+    }
+  });
   self.bind("destroy", function() {
     Sound.play('death');
+    if (I.hasFlag) {
+      I.hasFlag = false;
+      engine.add({
+        "class": "Flag",
+        x: I.x,
+        y: I.y
+      });
+    }
     engine.add({
       "class": "ParticleEffect",
       color: I.color,
@@ -9965,16 +11918,300 @@ Player = function(I) {
     return engine.delay(30, function() {
       return engine.add({
         "class": "Player",
-        team: I.team
+        team: I.team,
+        id: I.id,
+        randRespawn: true
       });
     });
   });
   return self;
 };;
+var Shot;
+Shot = function(I) {
+  var COLORS, self;
+  if (I == null) {
+    I = {};
+  }
+  Object.reverseMerge(I, {
+    width: 0,
+    height: 0,
+    includedModules: ["Durable"],
+    duration: 4,
+    length: 1200
+  });
+  COLORS = ["rgb(255, 255, 255)", "rgba(255, 255, 255, 0.75)", "rgba(255, 255, 255, 0.50)", "rgba(255, 255, 255, 0.25)", "rgba(64, 64, 64, 0.25)"];
+  self = GameObject(I).extend({
+    detectHit: function() {
+      var distanceSquared, hits, nearestHit, object, objects, point, walls;
+      objects = engine.find("Player");
+      hits = [];
+      objects.each(function(object) {
+        var distanceSquared, point;
+        if (object !== I.source) {
+          if (point = Collision.rayCircle(I.start, I.direction, object)) {
+            distanceSquared = Point.distanceSquared(I.start, point);
+            return hits.push({
+              distanceSquared: distanceSquared,
+              point: point,
+              object: object
+            });
+          }
+        }
+      });
+      walls = engine.find("Wall");
+      walls.each(function(wall) {
+        var distanceSquared, point;
+        if (point = wall.rayCollides(I)) {
+          distanceSquared = Point.distanceSquared(I.start, point);
+          return hits.push({
+            distanceSquared: distanceSquared,
+            point: point,
+            wall: wall
+          });
+        }
+      });
+      hits.sort(function(a, b) {
+        return a.distanceSquared - b.distanceSquared;
+      });
+      if (nearestHit = hits.first()) {
+        point = nearestHit.point, distanceSquared = nearestHit.distanceSquared, object = nearestHit.object;
+        I.end = point;
+        if (object != null) {
+          object.trigger("collide", self);
+        }
+        return engine.add({
+          "class": "ParticleEffect",
+          color: "pink",
+          particleCount: 2,
+          x: point.x,
+          y: point.y
+        });
+      }
+    }
+  });
+  self.unbind("draw");
+  self.bind("draw", function(canvas) {
+    if (I.end) {
+      return canvas.drawLine({
+        start: I.start,
+        end: I.end,
+        color: COLORS[I.age],
+        width: 2
+      });
+    } else {
+      return canvas.drawLine({
+        start: I.start,
+        direction: I.direction,
+        length: I.length,
+        color: COLORS[I.age],
+        width: 2
+      });
+    }
+  });
+  self.bind("update", function() {});
+  self.detectHit();
+  return self;
+};;
+var Wall;
+Wall = function(I) {
+  var closestPoint, collided, inside, lastProj, norm, self;
+  if (I == null) {
+    I = {};
+  }
+  $.reverseMerge(I, {
+    color: "orange",
+    start: Point(rand(App.width), rand(App.height)),
+    sprite: "placeholder",
+    end: Point(rand(App.width), rand(App.height)),
+    width: 0,
+    height: 0
+  });
+  I.zIndex = 1 + (I.y + I.height) / App.height;
+  lastProj = 0;
+  inside = false;
+  collided = false;
+  closestPoint = void 0;
+  norm = void 0;
+  self = GameObject(I).extend({
+    direction: function() {
+      return I.end.subtract(I.start);
+    },
+    normal: function() {
+      var delta;
+      delta = self.direction();
+      return Point(-delta.y, delta.x).norm();
+    },
+    length: function() {
+      return self.direction().length();
+    },
+    midpoint: function() {
+      return I.start.add(I.end).scale(0.5);
+    },
+    collides: function(circle) {
+      var direction, pos, projectionLength, vec;
+      pos = Point(circle.x, circle.y);
+      vec = pos.subtract(I.start);
+      direction = self.direction().norm();
+      lastProj = projectionLength = vec.dot(direction);
+      inside = projectionLength > 0 && projectionLength < self.length();
+      if (inside) {
+        closestPoint = I.start.add(direction.scale(projectionLength));
+        closestPoint.radius = 0;
+        if (Collision.circular(circle, closestPoint)) {
+          collided = true;
+          norm = pos.subtract(closestPoint).norm();
+          return norm;
+        }
+      }
+      collided = false;
+      norm = void 0;
+      return closestPoint = void 0;
+    },
+    rayCollides: function(ray) {
+      var crossProduct, delta, s, t;
+      crossProduct = self.direction().cross(ray.direction);
+      delta = I.start.subtract(ray.start);
+      t = ray.direction.cross(delta) / crossProduct;
+      s = self.direction().cross(delta) / crossProduct;
+      if (0 <= s) {
+        if ((0 <= t && t <= 1)) {
+          return Point.interpolate(I.start, I.end, t);
+        }
+      }
+    }
+  });
+  self.bind("update", function() {});
+  self.unbind("draw");
+  self.bind("draw", function(canvas) {
+    return canvas.drawLine({
+      color: I.color,
+      start: I.start,
+      end: I.end,
+      width: 4
+    });
+  });
+  self.bind("drawDebug", function(canvas) {
+    canvas.drawLine({
+      color: "green",
+      start: self.midpoint(),
+      end: self.midpoint().add(self.normal().scale(15)),
+      width: 3
+    });
+    canvas.drawCircle({
+      position: I.start,
+      radius: 5,
+      color: "purple"
+    });
+    if (lastProj != null) {
+      canvas.drawLine({
+        color: "rgba(255, 0, 0, 0.75)",
+        direction: self.direction(),
+        start: I.start,
+        length: lastProj,
+        width: 2
+      });
+    }
+    if ((norm != null) && (closestPoint != null)) {
+      return canvas.drawLine({
+        start: closestPoint,
+        end: closestPoint.add(norm.scale(20)),
+        color: "red"
+      });
+    }
+  });
+  return self;
+};;
+var Weapon;
+Weapon = function(I) {
+  var self;
+  if (I == null) {
+    I = {};
+  }
+  Object.reverseMerge(I, {
+    color: "blue",
+    cooldown: 3,
+    height: 32,
+    width: 32,
+    fire: function() {}
+  });
+  self = GameObject(I).extend({
+    fire: function(source, direction) {
+      I.fire(source, direction);
+      return I.cooldown;
+    }
+  });
+  return self;
+};
+Weapon.Weapons = {
+  homingMissile: Weapon({
+    cooldown: 15,
+    fire: function(source, direction) {
+      var position;
+      position = source.position().add(Point(Math.cos(direction), Math.sin(direction)).scale(30));
+      return engine.add({
+        "class": "HomingMissile",
+        x: position.x,
+        y: position.y,
+        source: source,
+        owner: source,
+        velocity: direction.scale(10)
+      });
+    }
+  }),
+  machineGun: Weapon({
+    cooldown: 3,
+    fire: function(source, direction) {
+      var angle;
+      angle = Math.atan2(direction.y, direction.x);
+      angle += rand() * (Math.TAU / 96) - (Math.TAU / 192);
+      Sound.play("bls_sfx_machinegun_02", 1);
+      return engine.add({
+        "class": "Shot",
+        damage: 4,
+        source: source,
+        start: source.position(),
+        direction: Point.fromAngle(angle),
+        owner: source
+      });
+    }
+  }),
+  mine: Weapon({
+    cooldown: 40,
+    fire: function(source, direction) {
+      return engine.add({
+        "class": "Mine",
+        x: source.position().x,
+        y: source.position().y,
+        owner: source
+      });
+    }
+  }),
+  shotgun: Weapon({
+    cooldown: 30,
+    fire: function(source, direction) {
+      Sound.play("bls_sfx_shotgun_01");
+      return (7).times(function() {
+        var angle;
+        angle = Math.atan2(direction.y, direction.x);
+        angle += rand() * (Math.TAU / 20) - (Math.TAU / 40);
+        return engine.add({
+          "class": "Shot",
+          damage: 12,
+          direction: Point.fromAngle(angle),
+          source: source,
+          start: source.position(),
+          owner: source
+        });
+      });
+    }
+  })
+};;
 App.entities = {};;
 ;$(function(){ var DEBUG_DRAW, background, bg, physics;
 DEBUG_DRAW = false;
-window.sprites = Sprite.loadSheet('soldiers', 32, 48);
+window.playerSprites = [0, 1, 2, 3, 4, 5].map(function(n) {
+  return Sprite.loadSheet("shootman" + n, 32, 48);
+});
 window.engine = Engine({
   backgroundColor: 'black',
   canvas: $("canvas").pixieCanvas(),
@@ -9984,12 +12221,22 @@ window.engine = Engine({
   includedModules: ["Joysticks"],
   zSort: true
 });
+window.playerScores = {
+  0: 0,
+  1: 0,
+  2: 0,
+  3: 0,
+  4: 0,
+  5: 0
+};
 background = Sprite.loadByName("ice_bg");
 physics = Physics();
-(4).times(function(i) {
+Level.load(Level.data.rand());
+(6).times(function(i) {
   return engine.add({
     "class": "Player",
-    team: i
+    team: i,
+    id: i
   });
 });
 bg = engine.add({
@@ -10003,7 +12250,7 @@ bg.bind('draw', function(canvas) {
   return canvas.fill('rgba(0, 0, 0, 0.3)');
 });
 engine.bind("update", function() {
-  var key, value, _ref;
+  var key, value, walls, _ref;
   _ref = engine.I.cooldowns;
   for (key in _ref) {
     value = _ref[key];
@@ -10011,25 +12258,41 @@ engine.bind("update", function() {
   }
   if (engine.I.cooldowns.shake > 0) {
     engine.I.cameraTransform = Matrix();
-    engine.I.cameraTransform.tx += (rand() * 10) - 10 / 2;
-    engine.I.cameraTransform.ty += (rand() * 10) - 10 / 2;
+    engine.I.cameraTransform.tx += (rand() * 14) - 14 / 2;
+    engine.I.cameraTransform.ty += (rand() * 14) - 14 / 2;
   } else {
     engine.I.cameraTransform = Matrix();
   }
-  physics.process(engine.find("Player, Bullet, Box"));
-  if (rand(30) === 0) {
-    return engine.add({
-      "class": "Box",
-      x: rand(App.width),
-      y: rand(App.height),
-      width: 30,
-      height: 30
-    });
+  walls = engine.find("Wall");
+  return physics.process(engine.find("Player, Bullet, Box, Flag, Explosion, HomingMissile"), walls);
+});
+engine.bind("overlay", function(canvas) {
+  var id, players, score, _ref, _results;
+  players = engine.find("Player");
+  canvas.drawRoundRect({
+    color: 'rgba(255, 255, 255, 0.5)',
+    x: 0,
+    y: -10,
+    width: App.width,
+    height: 50
+  });
+  canvas.font('16px helvetica');
+  _ref = window.playerScores;
+  _results = [];
+  for (id in _ref) {
+    score = _ref[id];
+    _results.push(canvas.centerText({
+      color: 'black',
+      text: "Player " + (parseInt(id) + 1) + ": " + score,
+      x: (App.width / 6 * id) + 60,
+      y: 25
+    }));
   }
+  return _results;
 });
 engine.bind("draw", function(canvas) {
   if (DEBUG_DRAW) {
-    return engine.find("Player, Bullet, Box").each(function(object) {
+    return engine.find("Player, Bullet, Box, Wall, Explosion").each(function(object) {
       return object.trigger("drawDebug", canvas);
     });
   }
