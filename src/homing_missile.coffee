@@ -19,6 +19,8 @@ HomingMissile = (I={}) ->
         class: "Explosion"
         damage: 5
         deltaRadius: 3
+        particleCount: 10
+        particleDamage: 2
         radius: 10
         x: I.x
         y: I.y 
