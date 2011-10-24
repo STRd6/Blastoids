@@ -49,8 +49,8 @@ engine.bind "update", ->
   if engine.I.cooldowns.shake > 0    
     engine.I.cameraTransform = Matrix()
     # screen shake
-    engine.I.cameraTransform.tx += (rand() * 10) - 10 / 2
-    engine.I.cameraTransform.ty += (rand() * 10) - 10 / 2
+    engine.I.cameraTransform.tx += (rand() * 14) - 14 / 2
+    engine.I.cameraTransform.ty += (rand() * 14) - 14 / 2
   else
     engine.I.cameraTransform = Matrix()
 
