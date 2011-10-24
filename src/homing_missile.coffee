@@ -17,7 +17,7 @@ HomingMissile = (I={}) ->
 
       engine.add
         class: "Explosion"
-        damage: 3
+        damage: 2
         deltaRadius: 3
         particleCount: 2
         particleDamage: 2
