@@ -43,6 +43,9 @@ Physics = ->
     players = objects.select (object) ->
       object.I.class == "Player"
 
+    missiles = objects.select (object) ->
+      object.I.class == "Missile"
+
     steps = 4
 
     dt = 1/steps
@@ -51,7 +54,7 @@ Physics = ->
       objects.invoke "updatePosition", dt
 
       resolveCollisions(objects, dt)
-      resolveWallCollisions(players, walls, dt)
+      resolveWallCollisions(players.concat(missiles), walls, dt)
 
     # Debug walls
     if player1 = engine.find("Player.team=0").first()
