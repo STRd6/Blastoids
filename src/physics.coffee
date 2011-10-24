@@ -44,7 +44,7 @@ Physics = ->
       object.I.class == "Player"
 
     missiles = objects.select (object) ->
-      object.I.class == "Missile"
+      object.I.class == "HomingMissile"
 
     steps = 4
 
