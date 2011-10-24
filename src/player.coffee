@@ -25,8 +25,6 @@ Player = (I) ->
     speed: 7
     velocity: Point(0, 0)
 
-  window.playerScores[I.team] = 0
-
   sprites = window.playerSprites[I.team]
 
   controller = Joysticks.getController(I.team)
