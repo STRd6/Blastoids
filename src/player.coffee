@@ -110,6 +110,9 @@ Player = (I) ->
         if weapon = Weapon.Weapons[activeWeapon]
           I.cooldowns.shoot += weapon.fire(self, I.crosshairPosition.norm())
 
+    I.x = I.x.clamp(0, App.width)
+    I.y = I.y.clamp(0, App.height)
+
   self.bind "collide", (other) ->
     if other.I.source != self and other.I.active
       if damage = other.I.damage
