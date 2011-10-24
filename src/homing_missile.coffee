@@ -18,7 +18,7 @@ HomingMissile = (I={}) ->
   self.bind "destroy", (other) ->
     engine.add
       class: "Explosion"
-      damage: 2
+      damage: 1
       deltaRadius: 3
       particleCount: 2
       particleDamage: 2
