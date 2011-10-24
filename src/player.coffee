@@ -19,6 +19,7 @@ Player = (I) ->
     height: 32
     width: 32
     radius: 16
+    score: 0
     team: 0
     x: rand(App.width)
     y: rand(App.height)
