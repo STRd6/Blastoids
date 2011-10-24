@@ -18,18 +18,6 @@ Weapon = (I={}) ->
   return self
 
 Weapon.Weapons =
-  blade: Weapon
-    cooldown: 200
-    fire: (source, direction) ->
-      3.times (n) ->
-        direction = (Math.TAU * n) / 3
-        position = source.position().add(Point(Math.cos(direction), Math.sin(direction)).scale(30))
-
-        engine.add
-          class: "Blade"
-          x: position.x
-          y: position.y
-
   homingMissile: Weapon
     cooldown: 15
     fire: (source, direction) ->
@@ -40,6 +28,7 @@ Weapon.Weapons =
         x: position.x
         y: position.y
         source: source
+        owner: source
 
   machineGun: Weapon
     cooldown: 3
@@ -55,6 +44,7 @@ Weapon.Weapons =
         source: source
         start: source.position()
         direction: Point.fromAngle(angle)
+        owner: source
 
   mine: Weapon
     cooldown: 40
@@ -63,6 +53,7 @@ Weapon.Weapons =
         class: "Mine"
         x: source.position().x
         y: source.position().y
+        owner: source
 
   shotgun: Weapon
     cooldown: 30
@@ -78,8 +69,5 @@ Weapon.Weapons =
           direction: Point.fromAngle(angle)
           source: source
           start: source.position()
-
-  starDetonator: Weapon
-    cooldown: 15
-    fire: (source, direction) ->
+          owner: source
 
