@@ -47,7 +47,7 @@ Weapon.Weapons =
       angle = Math.atan2(direction.y, direction.x)
       angle += rand() * (Math.TAU / 96) - (Math.TAU / 192)
 
-      Sound.play "bls_sfx_machinegun_02"
+      Sound.play "bls_sfx_machinegun_02", 1
 
       engine.add
         class: "Shot"
