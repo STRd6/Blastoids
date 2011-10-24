@@ -37,6 +37,8 @@ Physics = ->
         # Move out of wall
         object.updatePosition(dt)
 
+        object.trigger "wallCollide"
+
   process: (objects, walls) ->
     players = objects.select (object) ->
       object.I.class == "Player"
