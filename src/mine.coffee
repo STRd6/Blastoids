@@ -12,6 +12,8 @@ Mine = (I={}) ->
       self.destroy()
 
   self.bind 'destroy', ->
+    engine.I.cooldowns.shake = 7
+
     engine.add
       class: "Explosion"
       owner: I.owner
