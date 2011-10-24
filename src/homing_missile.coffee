@@ -47,5 +47,5 @@ HomingMissile = (I={}) ->
 
           if direction
             I.velocity = Point((I.velocity.x * 0.95) + Math.cos(direction), (I.velocity.y * 0.95) + Math.sin(direction))
-
+  Sound.play "bls_sfx_rocketlaunch_01"
   return self
