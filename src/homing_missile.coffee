@@ -1,6 +1,6 @@
 HomingMissile = (I={}) ->
   Object.reverseMerge I,
-    damage: 2
+    damage: 10
     duration: 40
     height: 24
     includedModules: ["Durable", "Rotatable"]
@@ -10,6 +10,18 @@ HomingMissile = (I={}) ->
     velocity: Point(0, 0)
 
   self = Base(I)
+
+  self.bind "collide", (other) ->
+    if other != I.source
+      self.destroy()
+
+      engine.add
+        class: "Explosion"
+        damage: 5
+        deltaRadius: 3
+        radius: 10
+        x: I.x
+        y: I.y 
 
   self.bind "update", ->
     players = engine.find("Player")
