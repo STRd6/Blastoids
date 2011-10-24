@@ -28,6 +28,8 @@
   
     <li></li>
   
+    <li></li>
+  
     <li><a href="../symbols/Collision.html">Collision</a></li>
   
     <li><a href="../symbols/Color.html">Color</a></li>
@@ -107,6 +109,8 @@
     <li></li>
   
     <li><a href="../symbols/Bounded.html">Bounded</a></li>
+  
+    <li><a href="../symbols/Collidable.html">Collidable</a></li>
   
     <li></li>
   
@@ -326,6 +330,18 @@
                           </span>
                         </div>
                         <div class="description">The <code>Shadows</code> module provides a lighting extension to the Engine.</div>
+                      </td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="nameDescription">
+                        <div class="fixedFont">
+                        Engine.<b><a href="../symbols/Engine.html#.Stats">Stats</a></b>
+                          <span class='lighter'>
+                          <em>static</em>
+                          </span>
+                        </div>
+                        <div class="description">The <code>Stats</code> module provides methods to query the engine to find game objects.</div>
                       </td>
                     </tr>
                   
@@ -751,6 +767,25 @@ the responsibility of the objects drawing on it to manage that themselves.
                 <div class="description">
                   The <code>Joysticks</code> module gives the engine access to joysticks.
 
+  <code><pre>
+  # First you need to add the joysticks module to the engine
+  window.engine = Engine
+    ...
+    includedModules: ["Joysticks"]
+  # Then you need to get a controller reference
+  # id = 0 for player 1, etc.
+  controller = engine.controller(id)
+
+  # Point indicating direction primary axis is held
+  direction = controller.position()
+
+  # Check if buttons are held
+  controller.actionDown("A")
+  controller.actionDown("B")
+  controller.actionDown("X")
+  controller.actionDown("Y")
+  </pre></code>
+
                   
                 </div>
 
@@ -812,6 +847,26 @@ the responsibility of the objects drawing on it to manage that themselves.
                   The <code>Shadows</code> module provides a lighting extension to the Engine. Objects that have
 an illuminate method will add light to the scene. Objects that have an true opaque attribute will cast
 shadows.
+
+                  
+                </div>
+
+                
+
+                
+              
+                <div class="fixedFont heading">
+                  <a name=".Stats"></a>
+                  
+
+                  <span class="light">Engine.</span><b>Stats</b>
+                  <span class='lighter'>
+                  <em>static</em>
+                  </span>
+                </div>
+
+                <div class="description">
+                  The <code>Stats</code> module provides methods to query the engine to find game objects.
 
                   
                 </div>

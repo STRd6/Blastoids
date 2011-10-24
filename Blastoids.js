@@ -11859,10 +11859,12 @@ Player = function(I) {
     if (I.cooldowns.shoot === 0) {
       if (controller.axis(5) > 16000 || controller.axis(4) > 16000) {
         if (weapon = Weapon.Weapons[activeWeapon]) {
-          return I.cooldowns.shoot += weapon.fire(self, I.crosshairPosition.norm());
+          I.cooldowns.shoot += weapon.fire(self, I.crosshairPosition.norm());
         }
       }
     }
+    I.x = I.x.clamp(0, App.width);
+    return I.y = I.y.clamp(0, App.height);
   });
   self.bind("collide", function(other) {
     var damage, owner;
