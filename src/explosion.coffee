@@ -4,6 +4,8 @@ Explosion = (I={}) ->
     damage: 20
     duration: 4
     radius: 30
+    particleCount: 20
+    particleDamage: 15
     deltaRadius: 10
     color: "rgba(255, 0, 0, 0.5)"
     velocity: Point(0, 0)
@@ -21,12 +23,12 @@ Explosion = (I={}) ->
 
   Sound.play ["bls_sfx_explosion1_01", "bls_sfx_explosion2_01", "bls_sfx_explosion3_01"].rand()
 
-  20.times (n) ->
-    angle = (Math.TAU * (n + 1)) / 20 
+  I.particleCount.times (n) ->
+    angle = (Math.TAU * (n + 1)) / I.particleCount
 
     engine.add
       class: "Shot"
-      damage: 15
+      damage: I.particleDamage
       direction: Point.fromAngle(angle + rand() * Math.TAU / 16)
       source: I.source
       start: self.position()
