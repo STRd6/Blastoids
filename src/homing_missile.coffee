@@ -19,7 +19,7 @@ HomingMissile = (I={}) ->
         class: "Explosion"
         damage: 5
         deltaRadius: 3
-        particleCount: 10
+        particleCount: 2
         particleDamage: 2
         radius: 10
         x: I.x
@@ -47,5 +47,5 @@ HomingMissile = (I={}) ->
 
           if direction
             I.velocity = Point((I.velocity.x * 0.95) + Math.cos(direction), (I.velocity.y * 0.95) + Math.sin(direction))
-  Sound.play "bls_sfx_rocketlaunch_01"
+
   return self
