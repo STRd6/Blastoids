@@ -15,15 +15,16 @@ HomingMissile = (I={}) ->
     if other != I.source && I.active
       self.destroy()
 
-      engine.add
-        class: "Explosion"
-        damage: 2
-        deltaRadius: 3
-        particleCount: 2
-        particleDamage: 2
-        radius: 10
-        x: I.x
-        y: I.y 
+  self.bind "destroy", (other) ->
+    engine.add
+      class: "Explosion"
+      damage: 2
+      deltaRadius: 3
+      particleCount: 2
+      particleDamage: 2
+      radius: 10
+      x: I.x
+      y: I.y 
 
   self.bind "wallCollide", ->
     self.destroy()
